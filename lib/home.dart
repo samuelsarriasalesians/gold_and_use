@@ -11,6 +11,7 @@ class Home extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5), // Set background color
       appBar: AppBar(
+        automaticallyImplyLeading: false, // Quita el botón de ir atrás
         actions: [
           PopupMenuButton<String>(
             icon: Image.asset('assets/icono_ajustes.png'),
@@ -64,7 +65,6 @@ class Home extends StatelessWidget {
                     'You are home',
                     style: TextStyle(fontSize: 42),
                   ),
-                  
                 ],
               ),
             ),
