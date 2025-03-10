@@ -1,14 +1,17 @@
-import './phone_sign_up.dart';
+import 'package:gold_and_use/AdminHome.dart';
+
+import 'SignIn/phone_sign_up.dart';
 import './splash.dart'; // Asegúrate de importar el nuevo archivo
 import 'package:flutter/material.dart';
 import 'package:supabase_auth_ui/supabase_auth_ui.dart';
 
 import './home.dart';
-import './sign_in.dart';
-import './magic_link.dart';
-import './update_password.dart';
-import 'phone_sign_in.dart';
-import './verify_phone.dart';
+import 'SignIn/sign_in.dart';
+import 'SignIn/update_password.dart';
+import 'SignIn/phone_sign_in.dart';
+import 'SignIn/verify_phone.dart';
+import './settings_screen.dart';
+import './AdminHome.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,13 +40,14 @@ class MyApp extends StatelessWidget {
       initialRoute: '/splash', // Cambia la ruta inicial al splash
       routes: {
         '/splash': (context) => SplashScreen(), // Ruta para el splash
-        '/': (context) => SignUp(), // Ruta para el inicio de sesión/registro
-        '/magic_link': (context) => const MagicLink(),
+        '/': (context) => LoginScreen(), // Ruta para el inicio de sesión/registro
         '/update_password': (context) => const UpdatePassword(),
         '/phone_sign_in': (context) => const PhoneSignIn(),
         '/phone_sign_up': (context) => const PhoneSignUp(),
         '/verify_phone': (context) => const VerifyPhone(),
         '/home': (context) => const Home(),
+        '/admin_home': (context) => Adminhome(),
+        '/settings_screen': (context) => SettingsScreen(), // Ruta para la pantalla de ajustes
       },
       onUnknownRoute: (RouteSettings settings) {
         return MaterialPageRoute<void>(

@@ -40,6 +40,10 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  qr_flutter: ^4.1.0
+  flutter_map: ^3.0.0
+  latlong2: ^0.8.1
+
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -92,3 +96,13 @@ flutter:
     - assets/splash.gif
     - assets/logo.png
     - assets/icono_ajustes.png
+    - assets/qr_icon.png
+    - assets/transacciones.png
+    - assets/maps.png
+    - assets/Users/icono.png
+    - assets/Transacciones/icono.png
+    - assets/Empeños/icono.png
+    - assets/Inversiones/icono.png
+    - assets/Ubicaciones/icono.png
+    - assets/Notificaciones/icono.png
+

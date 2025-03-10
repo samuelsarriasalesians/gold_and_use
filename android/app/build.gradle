@@ -1,44 +1,61 @@
+buildscript {
+    ext.kotlin_version = '1.9.0' // Actualiza a la última versión de Kotlin
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.1.0' // Usa una versión más nueva de AGP
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
 plugins {
     id "com.android.application"
     id "kotlin-android"
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id "dev.flutter.flutter-gradle-plugin"
 }
 
 android {
-    namespace = "com.example.gold_and_use"
-    compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    namespace = "com.example.gold_and_use" // Especifica el namespace de tu aplicación
+    compileSdk 34
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin' // Incluye Kotlin en la compilación
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.example.gold_and_use"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
+        minSdkVersion flutter.minSdkVersion  // Asegúrate de que la versión mínima del SDK esté configurada correctamente
+        targetSdkVersion 33
+        versionCode flutter.versionCode
+        versionName flutter.versionName
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
 
-    buildTypes {
-        release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.debug
-        }
+    kotlinOptions {
+        jvmTarget = '11' // Configura para Java 11
+    }
+
+    compileOptions {
+        coreLibraryDesugaringEnabled true // Activa el soporte para nuevas APIs de lenguaje
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    if (!project.hasProperty('namespace')) {
+        namespace 'com.example.gold_and_use' // Establece el namespace si no está ya configurado
     }
 }
 
 flutter {
-    source = "../.."
+    source = "../.." // Ruta al directorio fuente de Flutter
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.zxing:core:3.5.2'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3' // Para compatibilidad con Java 11
 }
