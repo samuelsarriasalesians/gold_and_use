@@ -17,6 +17,7 @@ dependencies:
   html: ^0.15.0  # Agrega esta línea
   image_picker: ^0.8.5+3
   fl_chart: ^0.63.0
+  dio: ^5.4.0
 
  
 

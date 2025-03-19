@@ -110,12 +110,12 @@ class _TransaccionesGraficoState extends State<TransaccionesGrafico> {
           : Row(
               children: [
                 _buildChart("Compras", _compraData, const Color.fromARGB(255, 215, 255, 57)),
-                const SizedBox(width: 8), // Espacio pequeño entre gráfico y línea
+                const SizedBox(width: 15), // Espacio pequeño entre gráfico y línea
                 Container(
                   width: 1, // Ancho de la línea divisoria
                   color: Colors.black, // Color de la línea divisoria
                 ),
-                const SizedBox(width: 8), // Espacio pequeño entre línea y gráfico
+                const SizedBox(width: 15), // Espacio pequeño entre línea y gráfico
                 _buildChart("Ventas", _ventaData, Colors.red),
               ],
             ),

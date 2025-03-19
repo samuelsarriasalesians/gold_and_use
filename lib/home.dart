@@ -82,12 +82,23 @@ class _HomeState extends State<Home> {
                   'icon': 'assets/transacciones.png',
                   'label': 'Transacciones'
                 },
-                {'route': '/maps', 'icon': 'assets/maps.png', 'label': 'Maps'},
+                {'route': '/maps', 'icon': 'assets/Ubicaciones/icono.png', 'label': 'Maps'},
                 {
-                  'route': '/perfil',
-                  'icon': 'assets/profile.png',
-                  'label': 'Perfil'
+                  'route': '/inversiones',
+                  'icon': 'assets/Inversiones/icono.png',
+                  'label': 'Inversiones'
                 },
+                {
+                  'route': '/empeños',
+                  'icon': 'assets/Empeños/icono.png',
+                  'label': 'Emepños'
+                },
+                {
+                  'route': '/notificaciones',
+                  'icon': 'assets/Notificaciones/icono.png',
+                  'label': 'Notificaciones'
+                },
+                
               ]),
               TransaccionesGrafico(userId: userId),
             ],
