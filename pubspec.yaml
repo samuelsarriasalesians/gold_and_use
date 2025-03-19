@@ -16,6 +16,8 @@ dependencies:
   supabase_flutter: ^2.5.6 # Actualiza esta línea a la versión compatible
   html: ^0.15.0  # Agrega esta línea
   image_picker: ^0.8.5+3
+  fl_chart: ^0.63.0
+
  
 
 

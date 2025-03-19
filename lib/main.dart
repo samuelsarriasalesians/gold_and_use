@@ -12,6 +12,7 @@ import 'SignIn/phone_sign_in.dart';
 import 'SignIn/verify_phone.dart';
 import './settings_screen.dart';
 import './AdminHome.dart';
+import 'Transacciones/TransaccionScreenAdmin.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +20,8 @@ void main() async {
   /// TODO: replace with your credentials
   await Supabase.initialize(
     url: 'https://dsjtherowikanmjmsiiv.supabase.co',
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRzanRoZXJvd2lrYW5tam1zaWl2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk4MTYzNDIsImV4cCI6MjA1NTM5MjM0Mn0.DhF6IzCHkWExDBEfuiTkP61sPGOBDS6ib1tkKU8FE1E',
+    anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRzanRoZXJvd2lrYW5tam1zaWl2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk4MTYzNDIsImV4cCI6MjA1NTM5MjM0Mn0.DhF6IzCHkWExDBEfuiTkP61sPGOBDS6ib1tkKU8FE1E',
   );
   runApp(const MyApp());
 }
@@ -40,14 +42,18 @@ class MyApp extends StatelessWidget {
       initialRoute: '/splash', // Cambia la ruta inicial al splash
       routes: {
         '/splash': (context) => SplashScreen(), // Ruta para el splash
-        '/': (context) => LoginScreen(), // Ruta para el inicio de sesión/registro
+        '/': (context) =>
+            LoginScreen(), // Ruta para el inicio de sesión/registro
         '/update_password': (context) => const UpdatePassword(),
         '/phone_sign_in': (context) => const PhoneSignIn(),
         '/phone_sign_up': (context) => const PhoneSignUp(),
         '/verify_phone': (context) => const VerifyPhone(),
         '/home': (context) => const Home(),
         '/admin_home': (context) => Adminhome(),
-        '/settings_screen': (context) => SettingsScreen(), // Ruta para la pantalla de ajustes
+        '/settings_screen': (context) =>
+            SettingsScreen(), // Ruta para la pantalla de ajustes
+        '/transacciones_screen': (context) =>
+            TransaccionScreen(), // Ruta para la pantalla de ajustes
       },
       onUnknownRoute: (RouteSettings settings) {
         return MaterialPageRoute<void>(

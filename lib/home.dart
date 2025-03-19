@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'Transacciones/TransaccionesGrafico.dart';
+
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
 
@@ -55,7 +57,8 @@ class _HomeState extends State<Home> {
             children: [
               Text(
                 'Sueldo: \$${userSalary}',
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               Expanded(
                 child: Center(
@@ -74,10 +77,19 @@ class _HomeState extends State<Home> {
             children: [
               const SizedBox(height: 24),
               buildMenuGrid([
-                {'route': '/transacciones', 'icon': 'assets/transacciones.png', 'label': 'Transacciones'},
+                {
+                  'route': '/transacciones_screen',
+                  'icon': 'assets/transacciones.png',
+                  'label': 'Transacciones'
+                },
                 {'route': '/maps', 'icon': 'assets/maps.png', 'label': 'Maps'},
-                {'route': '/perfil', 'icon': 'assets/profile.png', 'label': 'Perfil'},
+                {
+                  'route': '/perfil',
+                  'icon': 'assets/profile.png',
+                  'label': 'Perfil'
+                },
               ]),
+              TransaccionesGrafico(userId: userId),
             ],
           ),
         ),
@@ -104,7 +116,8 @@ class _HomeState extends State<Home> {
       },
       itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
         const PopupMenuItem<String>(value: 'settings', child: Text('Settings')),
-        if (isAdmin) const PopupMenuItem<String>(value: 'admin', child: Text('Admin')),
+        if (isAdmin)
+          const PopupMenuItem<String>(value: 'admin', child: Text('Admin')),
         const PopupMenuItem<String>(value: 'logout', child: Text('Logout')),
       ],
     );
@@ -119,16 +132,19 @@ class _HomeState extends State<Home> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildMenuButton(context, items[i]['icon']!, items[i]['label']!, items[i]['route']!),
+              _buildMenuButton(context, items[i]['icon']!, items[i]['label']!,
+                  items[i]['route']!),
               const SizedBox(width: 16),
-              _buildMenuButton(context, items[i + 1]['icon']!, items[i + 1]['label']!, items[i + 1]['route']!),
+              _buildMenuButton(context, items[i + 1]['icon']!,
+                  items[i + 1]['label']!, items[i + 1]['route']!),
             ],
           ),
         );
       } else {
         rows.add(
           Center(
-            child: _buildMenuButton(context, items[i]['icon']!, items[i]['label']!, items[i]['route']!),
+            child: _buildMenuButton(context, items[i]['icon']!,
+                items[i]['label']!, items[i]['route']!),
           ),
         );
       }
@@ -138,7 +154,8 @@ class _HomeState extends State<Home> {
   }
 
   // Función para crear cada botón de menú
-  Widget _buildMenuButton(BuildContext context, String asset, String text, String route) {
+  Widget _buildMenuButton(
+      BuildContext context, String asset, String text, String route) {
     return GestureDetector(
       onTap: () => Navigator.of(context).pushNamed(route),
       child: Container(
