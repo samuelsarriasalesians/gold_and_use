@@ -7,6 +7,8 @@ class UserModel {
   final String? telefono;
   final String? direccion;
   final DateTime fechaCreacion;
+  final bool isAdmin;
+  final String? photo_url;
 
   UserModel({
     required this.id,
@@ -15,6 +17,8 @@ class UserModel {
     this.telefono,
     this.direccion,
     required this.fechaCreacion,
+    required this.isAdmin,
+    this.photo_url
   });
 
   // Convertir de un JSON (mapa de datos) a un objeto UserModel
@@ -26,6 +30,9 @@ class UserModel {
       telefono: json['telefono'],
       direccion: json['direccion'],
       fechaCreacion: DateTime.parse(json['fecha_creacion']),
+      isAdmin: json['is_admin'] == null ? false : json['is_admin'] as bool,
+      photo_url: json['photo_url'],
+      
     );
   }
 
@@ -38,6 +45,8 @@ class UserModel {
       'telefono': telefono,
       'direccion': direccion,
       'fecha_creacion': fechaCreacion.toIso8601String(),
+      'is_admin': isAdmin,
+      'photo_url': photo_url,
     };
   }
 }

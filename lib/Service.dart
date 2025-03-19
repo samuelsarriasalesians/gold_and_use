@@ -5,7 +5,8 @@ class AuthService {
   final SupabaseClient supabase = Supabase.instance.client;
 
   // Registro de usuario
-  Future<AuthResponse?> signUp(String email, String password, String nombre) async {
+  Future<AuthResponse?> signUp(
+      String email, String password, String nombre) async {
     try {
       final res = await supabase.auth.signUp(email: email, password: password);
       final user = res.user;
@@ -28,7 +29,8 @@ class AuthService {
   // Inicio de sesión con email y contraseña
   Future<AuthResponse?> signIn(String email, String password) async {
     try {
-      final res = await supabase.auth.signInWithPassword(email: email, password: password);
+      final res = await supabase.auth
+          .signInWithPassword(email: email, password: password);
       return res;
     } catch (e) {
       print('Error en signIn: $e');
@@ -71,11 +73,13 @@ class SupabaseService {
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => screen,
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(1.0, 0.0); // Empieza fuera de la pantalla (derecha)
+          const begin =
+              Offset(1.0, 0.0); // Empieza fuera de la pantalla (derecha)
           const end = Offset.zero; // Termina en su posición normal
           const curve = Curves.easeInOut; // Suaviza la animación
 
-          var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
           var offsetAnimation = animation.drive(tween);
 
           return SlideTransition(

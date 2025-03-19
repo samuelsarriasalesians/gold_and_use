@@ -16,7 +16,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController nombreController = TextEditingController();
   bool isLogin = true; // Alterna entre login y registro
-  bool isAdmin = false; // Estado de la casilla de verificación
 
   void _handleAuth() async {
     String email = emailController.text.trim();
@@ -25,11 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (isLogin) {
       final res = await authService.signIn(email, password);
       if (res?.user != null) {
-        if (isAdmin) {
-          Navigator.pushReplacementNamed(context, '/admin_home'); // Redirige a AdminHome
-        } else {
-          Navigator.pushReplacementNamed(context, '/home');
-        }
+        Navigator.pushReplacementNamed(context, '/home');
       } else {
         _showError('Error al iniciar sesión');
       }
@@ -37,11 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
       String nombre = nombreController.text.trim();
       final res = await authService.signUp(email, password, nombre);
       if (res?.user != null) {
-        if (isAdmin) {
-          Navigator.pushReplacementNamed(context, '/admin_home'); // Redirige a AdminHome
-        } else {
-          Navigator.pushReplacementNamed(context, '/home');
-        }
+        Navigator.pushReplacementNamed(context, '/home');
       } else {
         _showError('Error al registrarse');
       }
@@ -58,7 +49,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -112,7 +104,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           labelText: 'Nombre',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Colors.black, width: 1.0),
+                            borderSide: const BorderSide(
+                                color: Colors.black, width: 1.0),
                           ),
                         ),
                         style: const TextStyle(color: Colors.black),
@@ -124,7 +117,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         labelText: 'Email',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Colors.black, width: 1.0),
+                          borderSide:
+                              const BorderSide(color: Colors.black, width: 1.0),
                         ),
                       ),
                       keyboardType: TextInputType.emailAddress,
@@ -137,7 +131,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         labelText: 'Contraseña',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
-                          borderSide: const BorderSide(color: Colors.black, width: 1.0),
+                          borderSide:
+                              const BorderSide(color: Colors.black, width: 1.0),
                         ),
                       ),
                       obscureText: true,
@@ -145,19 +140,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 20),
                     // Casilla de verificación para admin
-                    CheckboxListTile(
-                      title: const Text(
-                        "¿Eres Administrador?",
-                        style: TextStyle(color: Colors.black), // Texto en negro
-                      ),
-                      value: isAdmin,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          isAdmin = value ?? false;
-                        });
-                      },
-                      activeColor: Colors.black, // Casilla en negro
-                    ),
                     ElevatedButton(
                       onPressed: _handleAuth,
                       child: Text(isLogin ? 'Iniciar Sesión' : 'Registrarse'),
@@ -168,7 +150,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           isLogin = !isLogin;
                         });
                       },
-                      child: Text(isLogin ? '¿No tienes cuenta? Regístrate' : '¿Ya tienes cuenta? Inicia sesión'),
+                      child: Text(isLogin
+                          ? '¿No tienes cuenta? Regístrate'
+                          : '¿Ya tienes cuenta? Inicia sesión'),
                     ),
                   ],
                 ),
@@ -180,7 +164,8 @@ class _LoginScreenState extends State<LoginScreen> {
           SupaSocialsAuth(
             colored: true,
             nativeGoogleAuthConfig: const NativeGoogleAuthConfig(
-              webClientId: '126321708933-i6cako6j9bs73g05er07rp5te4o70dkt.apps.googleusercontent.com',
+              webClientId:
+                  '126321708933-i6cako6j9bs73g05er07rp5te4o70dkt.apps.googleusercontent.com',
               iosClientId: 'TU_IOS_CLIENT_ID_AQUI',
             ),
             enableNativeAppleAuth: true,
@@ -188,11 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
               OAuthProvider.google,
             ],
             onSuccess: (session) {
-              if (isAdmin) {
-                Navigator.of(context).pushReplacementNamed('/admin_home'); // Redirige a AdminHome
-              } else {
-                Navigator.of(context).pushReplacementNamed('/home');
-              }
+              Navigator.pushReplacementNamed(context, '/home');
             },
           ),
           const SizedBox(height: 16),

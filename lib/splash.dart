@@ -10,19 +10,24 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // Inicia un temporizador de 2.5 segundos
-    Timer(Duration(seconds: 3), () {
-      // Navega a la pantalla de inicio de sesión
-      Navigator.of(context).pushReplacementNamed('/'); // Cambia esto si la ruta de inicio es diferente
+    // Usamos Future.delayed para esperar 3 segundos antes de navegar
+    Future.delayed(Duration(seconds: 3), () {
+      // Navegar a la pantalla principal
+      Navigator.of(context).pushReplacementNamed('/');
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5), // Set background color
+      backgroundColor: const Color(0xFFF5F5F5), // Fondo con color claro
       body: Center(
-        child: Image.asset('assets/splash.gif'), // Asegúrate de que la ruta sea correcta
+        // Ajusta el tamaño del GIF según tus necesidades
+        child: Image.asset(
+          'assets/splash.gif', 
+          width: MediaQuery.of(context).size.width, // Establece el ancho al 100% de la pantalla
+          height: MediaQuery.of(context).size.height, // Establece el alto al 100% de la pantalla
+        ),
       ),
     );
   }

@@ -84,19 +84,29 @@ class _TransaccionScreenState extends State<TransaccionScreen> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(
-                controller: _tipoController,
-                decoration: InputDecoration(labelText: 'Tipo (compra/venta)'),
+              // Aplicamos Padding a los TextField para generar espacio entre ellos
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: TextField(
+                  controller: _tipoController,
+                  decoration: InputDecoration(labelText: 'Tipo (compra/venta)'),
+                ),
               ),
-              TextField(
-                controller: _cantidadController,
-                decoration: InputDecoration(labelText: 'Cantidad (gramos)'),
-                keyboardType: TextInputType.number,
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: TextField(
+                  controller: _cantidadController,
+                  decoration: InputDecoration(labelText: 'Cantidad (gramos)'),
+                  keyboardType: TextInputType.number,
+                ),
               ),
-              TextField(
-                controller: _precioGramoController,
-                decoration: InputDecoration(labelText: 'Precio por gramo'),
-                keyboardType: TextInputType.number,
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: TextField(
+                  controller: _precioGramoController,
+                  decoration: InputDecoration(labelText: 'Precio por gramo'),
+                  keyboardType: TextInputType.number,
+                ),
               ),
             ],
           ),
@@ -108,7 +118,7 @@ class _TransaccionScreenState extends State<TransaccionScreen> {
             ElevatedButton(
               child: Text(transaccion == null ? 'Guardar' : 'Actualizar'),
               onPressed: () async {
-                // Aquí agregamos los valores requeridos:
+                // Agregamos los valores requeridos:
                 String usuarioId = "id_del_usuario"; // Obtén el ID del usuario logueado
                 DateTime fecha = DateTime.now(); // Fecha de la transacción
 

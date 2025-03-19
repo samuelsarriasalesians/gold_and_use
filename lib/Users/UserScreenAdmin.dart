@@ -74,8 +74,12 @@ class _UserScreenState extends State<UserScreen> {
   void _showUserForm(UserModel? user) {
     final _nombreController = TextEditingController(text: user?.nombre ?? '');
     final _emailController = TextEditingController(text: user?.email ?? '');
-    final _telefonoController = TextEditingController(text: user?.telefono ?? '');
-    final _direccionController = TextEditingController(text: user?.direccion ?? '');
+    final _telefonoController =
+        TextEditingController(text: user?.telefono ?? '');
+    final _direccionController =
+        TextEditingController(text: user?.direccion ?? '');
+
+    bool _isAdmin = user?.isAdmin ?? false; // Inicializamos el valor de isAdmin
 
     showDialog(
       context: context,
@@ -85,23 +89,74 @@ class _UserScreenState extends State<UserScreen> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(
-                controller: _nombreController,
-                decoration: InputDecoration(labelText: 'Nombre'),
+              // Agregamos Padding alrededor de cada TextField para un pequeño espacio
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0), // Ajusta el valor
+                child: TextField(
+                  controller: _nombreController,
+                  decoration: InputDecoration(
+                    labelText: 'Nombre',
+                    contentPadding: EdgeInsets.symmetric(horizontal: 12), // Espacio interno
+                  ),
+                ),
               ),
-              TextField(
-                controller: _emailController,
-                decoration: InputDecoration(labelText: 'Email'),
-                keyboardType: TextInputType.emailAddress,
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0), // Ajusta el valor
+                child: TextField(
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    contentPadding: EdgeInsets.symmetric(horizontal: 12), // Espacio interno
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                ),
               ),
-              TextField(
-                controller: _telefonoController,
-                decoration: InputDecoration(labelText: 'Teléfono'),
-                keyboardType: TextInputType.phone,
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0), // Ajusta el valor
+                child: TextField(
+                  controller: _telefonoController,
+                  decoration: InputDecoration(
+                    labelText: 'Teléfono',
+                    contentPadding: EdgeInsets.symmetric(horizontal: 12), // Espacio interno
+                  ),
+                  keyboardType: TextInputType.phone,
+                ),
               ),
-              TextField(
-                controller: _direccionController,
-                decoration: InputDecoration(labelText: 'Dirección'),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0), // Ajusta el valor
+                child: TextField(
+                  controller: _direccionController,
+                  decoration: InputDecoration(
+                    labelText: 'Dirección',
+                    contentPadding: EdgeInsets.symmetric(horizontal: 12), // Espacio interno
+                  ),
+                ),
+              ),
+              // DropdownButton para el campo 'isAdmin'
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: DropdownButtonFormField<bool>(
+                  value: _isAdmin,
+                  onChanged: (newValue) {
+                    setState(() {
+                      _isAdmin = newValue!;
+                    });
+                  },
+                  items: [
+                    DropdownMenuItem(
+                      child: Text('Administrador'),
+                      value: true,
+                    ),
+                    DropdownMenuItem(
+                      child: Text('No Administrador'),
+                      value: false,
+                    ),
+                  ],
+                  decoration: InputDecoration(
+                    labelText: 'Administrador',
+                    contentPadding: EdgeInsets.symmetric(horizontal: 12), // Espacio interno
+                  ),
+                ),
               ),
             ],
           ),
@@ -121,6 +176,7 @@ class _UserScreenState extends State<UserScreen> {
                     telefono: _telefonoController.text,
                     direccion: _direccionController.text,
                     fechaCreacion: DateTime.now(),
+                    isAdmin: _isAdmin, // Usamos el valor booleano aquí
                   ));
                 } else {
                   await userController.updateUser(user.id, {
@@ -128,6 +184,7 @@ class _UserScreenState extends State<UserScreen> {
                     'email': _emailController.text,
                     'telefono': _telefonoController.text,
                     'direccion': _direccionController.text,
+                    'isAdmin': _isAdmin, // Usamos el valor booleano aquí también
                   });
                 }
 

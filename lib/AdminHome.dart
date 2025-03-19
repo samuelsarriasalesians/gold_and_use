@@ -1,7 +1,7 @@
-import 'package:gold_and_use/Transacciones/TransaccionScreen.dart';
+import 'package:gold_and_use/Transacciones/TransaccionScreenAdmin.dart';
 import 'package:flutter/material.dart';
-import 'Users/UserScreen.dart';
-import 'Ubicaciones/UbicacionScreen.dart';
+import 'Users/UserScreenAdmin.dart';
+import 'Ubicaciones/UbicacionScreenAdmin.dart';
 import '../Service.dart';
 
 class Adminhome extends StatelessWidget {
