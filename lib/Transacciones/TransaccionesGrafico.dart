@@ -7,7 +7,7 @@ class TransaccionesGrafico extends StatefulWidget {
   final String userId;
   
   const TransaccionesGrafico({Key? key, required this.userId}) : super(key: key);
- 
+
   @override
   _TransaccionesGraficoState createState() => _TransaccionesGraficoState();
 }
