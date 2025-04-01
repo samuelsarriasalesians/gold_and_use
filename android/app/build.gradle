@@ -18,7 +18,7 @@ plugins {
 
 android {
     namespace = "com.example.gold_and_use" // Especifica el namespace de tu aplicación
-    compileSdk 34
+    compileSdk 35
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin' // Incluye Kotlin en la compilación

@@ -1,11 +1,12 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'TransaccioneService.dart';
 import 'TransaccionModel.dart';
 
 class TransaccionesGrafico extends StatefulWidget {
   final String userId;
-  
+
   const TransaccionesGrafico({Key? key, required this.userId}) : super(key: key);
 
   @override
@@ -25,7 +26,7 @@ class _TransaccionesGraficoState extends State<TransaccionesGrafico> {
 
   Future<void> _loadTransacciones() async {
     List<TransaccionModel> transacciones = await _transaccionController.getTransacciones();
-    
+
     transacciones = transacciones
         .where((t) => t.usuarioId == widget.userId)
         .toList()
@@ -34,14 +35,16 @@ class _TransaccionesGraficoState extends State<TransaccionesGrafico> {
     setState(() {
       _compraData = transacciones
           .where((t) => t.tipo == "compra")
-          .toList().asMap()
+          .toList()
+          .asMap()
           .entries
           .map((entry) => FlSpot(entry.key.toDouble(), entry.value.total))
           .toList();
 
       _ventaData = transacciones
           .where((t) => t.tipo == "venta")
-          .toList().asMap()
+          .toList()
+          .asMap()
           .entries
           .map((entry) => FlSpot(entry.key.toDouble(), entry.value.total))
           .toList();
@@ -86,39 +89,126 @@ class _TransaccionesGraficoState extends State<TransaccionesGrafico> {
     );
   }
 
+  void _openFullScreenChart() async {
+    await Navigator.of(context).push(
+      PageRouteBuilder(
+        transitionDuration: Duration(milliseconds: 300),
+        transitionsBuilder: (_, animation, __, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+        pageBuilder: (_, __, ___) => _FullScreenChart(
+          compraData: _compraData,
+          ventaData: _ventaData,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width * 0.8,
-      height: 250,
-      padding: const EdgeInsets.all(16),
-      margin: const EdgeInsets.only(top: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.3),
-            spreadRadius: 3,
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: _compraData.isEmpty && _ventaData.isEmpty
-          ? const Center(child: Text("No hay transacciones disponibles"))
-          : Row(
-              children: [
-                _buildChart("Compras", _compraData, const Color.fromARGB(255, 215, 255, 57)),
-                const SizedBox(width: 15), // Espacio pequeño entre gráfico y línea
-                Container(
-                  width: 1, // Ancho de la línea divisoria
-                  color: Colors.black, // Color de la línea divisoria
-                ),
-                const SizedBox(width: 15), // Espacio pequeño entre línea y gráfico
-                _buildChart("Ventas", _ventaData, Colors.red),
-              ],
+    return GestureDetector(
+      onTap: _compraData.isNotEmpty || _ventaData.isNotEmpty ? _openFullScreenChart : null,
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.8,
+        height: 250,
+        padding: const EdgeInsets.all(16),
+        margin: const EdgeInsets.only(top: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.3),
+              spreadRadius: 3,
+              blurRadius: 6,
+              offset: const Offset(0, 2),
             ),
+          ],
+        ),
+        child: _compraData.isEmpty && _ventaData.isEmpty
+            ? const Center(child: Text("No hay transacciones disponibles"))
+            : Row(
+                children: [
+                  _buildChart("Compras", _compraData, const Color.fromARGB(255, 215, 255, 57)),
+                  const SizedBox(width: 15),
+                  Container(width: 1, color: Colors.black),
+                  const SizedBox(width: 15),
+                  _buildChart("Ventas", _ventaData, Colors.red),
+                ],
+              ),
+      ),
+    );
+  }
+}
+
+class _FullScreenChart extends StatefulWidget {
+  final List<FlSpot> compraData;
+  final List<FlSpot> ventaData;
+
+  const _FullScreenChart({required this.compraData, required this.ventaData});
+
+  @override
+  State<_FullScreenChart> createState() => _FullScreenChartState();
+}
+
+class _FullScreenChartState extends State<_FullScreenChart> {
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
+  }
+
+  @override
+  void dispose() {
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: SafeArea(
+        child: Row(
+          children: [
+            Expanded(child: _buildChart("Compras", widget.compraData, const Color.fromARGB(255, 215, 255, 57))),
+            const VerticalDivider(color: Colors.white, width: 1),
+            Expanded(child: _buildChart("Ventas", widget.ventaData, Colors.red)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildChart(String title, List<FlSpot> data, Color color) {
+    return Column(
+      children: [
+        const SizedBox(height: 10),
+        Text(title, style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: LineChart(
+              LineChartData(
+                gridData: FlGridData(show: true),
+                titlesData: FlTitlesData(show: true),
+                borderData: FlBorderData(show: true),
+                lineBarsData: [
+                  LineChartBarData(
+                    spots: data,
+                    isCurved: true,
+                    color: color,
+                    barWidth: 3,
+                    isStrokeCapRound: true,
+                    belowBarData: BarAreaData(show: true, color: color.withOpacity(0.2)),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

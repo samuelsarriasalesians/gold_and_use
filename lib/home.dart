@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
 import 'Transacciones/TransaccionesGrafico.dart';
+import 'services/HomeService.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -18,92 +18,61 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    _fetchUserData();
+    _loadUserData();
   }
 
-  Future<void> _fetchUserData() async {
-    try {
-      final response = await Supabase.instance.client
-          .from('users')
-          .select('isAdmin, cantidad_total')
-          .eq('id', userId)
-          .single();
-
-      setState(() {
-        isAdmin = response['isAdmin'] ?? false;
-        userSalary = response['cantidad_total']?.toString() ?? "No disponible";
-      });
-    } catch (e) {
-      setState(() {
-        userSalary = "Error al cargar sueldo";
-      });
-      print("Error obteniendo datos del usuario: $e");
-    }
+  Future<void> _loadUserData() async {
+    final result = await HomeService.getUserData(userId);
+    setState(() {
+      isAdmin = result["isAdmin"];
+      userSalary = result["userSalary"];
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 360;
+    final buttonSize = isSmallScreen ? 130.0 : 160.0;
+    final iconSize = isSmallScreen ? 60.0 : 80.0;
+    final fontSize = isSmallScreen ? 14.0 : 18.0;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        titleSpacing: 0,
-        backgroundColor: Color(0xFFFFD700),
-        elevation: 0,
-        flexibleSpace: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+      appBar: _buildAppBar(),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 16.0),
+        child: Column(
+          children: [
+            const SizedBox(height: 24),
+            _buildMenu(buttonSize, iconSize, fontSize),
+            const SizedBox(height: 16),
+            TransaccionesGrafico(userId: userId),
+          ],
+        ),
+      ),
+    );
+  }
+
+  AppBar _buildAppBar() {
+    return AppBar(
+      automaticallyImplyLeading: false,
+      titleSpacing: 0,
+      backgroundColor: const Color(0xFFFFD700),
+      elevation: 0,
+      flexibleSpace: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Sueldo: \$${userSalary}',
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
+              Text('Sueldo: \$${userSalary}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               Expanded(
                 child: Center(
-                  child: Image.asset('assets/logo.png', height: 50),
+                  child: Image.asset('assets/logo.png', height: 45),
                 ),
               ),
               _buildSettingsMenu(),
-            ],
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              const SizedBox(height: 24),
-              buildMenuGrid([
-                {
-                  'route': '/transacciones_screen',
-                  'icon': 'assets/transacciones.png',
-                  'label': 'Transacciones'
-                },
-                {
-                  'route': '/maps', 
-                  'icon': 'assets/Ubicaciones/icono.png', 
-                  'label': 'Ubicaciones'},
-                {
-                  'route': '/inversiones',
-                  'icon': 'assets/Inversiones/icono.png',
-                  'label': 'Inversiones'
-                },
-                {
-                  'route': '/empeños',
-                  'icon': 'assets/Empeños/icono.png',
-                  'label': 'Emepños'
-                },
-                {
-                  'route': '/notificaciones',
-                  'icon': 'assets/Notificaciones/icono.png',
-                  'label': 'Notificaciones'
-                },
-                
-              ]),
-              TransaccionesGrafico(userId: userId),
             ],
           ),
         ),
@@ -128,78 +97,74 @@ class _HomeState extends State<Home> {
             break;
         }
       },
-      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-        const PopupMenuItem<String>(value: 'settings', child: Text('Settings')),
-        if (isAdmin)
-          const PopupMenuItem<String>(value: 'admin', child: Text('Admin')),
-        const PopupMenuItem<String>(value: 'logout', child: Text('Logout')),
+      itemBuilder: (context) => [
+        const PopupMenuItem(value: 'settings', child: Text('Settings')),
+        if (isAdmin) const PopupMenuItem(value: 'admin', child: Text('Admin')),
+        const PopupMenuItem(value: 'logout', child: Text('Logout')),
       ],
     );
   }
 
-  // Función para construir el grid de botones con alineación automática
-  Widget buildMenuGrid(List<Map<String, String>> items) {
+  Widget _buildMenu(double buttonSize, double iconSize, double fontSize) {
+    final items = [
+      {'route': '/transacciones_screen', 'icon': 'assets/transacciones.png', 'label': 'Transacciones'},
+      {'route': '/maps', 'icon': 'assets/Ubicaciones/icono.png', 'label': 'Ubicaciones'},
+      {'route': '/inversiones', 'icon': 'assets/Inversiones/icono.png', 'label': 'Inversiones'},
+      {'route': '/empeños', 'icon': 'assets/Empeños/icono.png', 'label': 'Empeños'},
+      {'route': '/notificaciones', 'icon': 'assets/Notificaciones/icono.png', 'label': 'Notificaciones'},
+    ];
+
     List<Widget> rows = [];
     for (int i = 0; i < items.length; i += 2) {
       if (i + 1 < items.length) {
-        rows.add(
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _buildMenuButton(context, items[i]['icon']!, items[i]['label']!,
-                  items[i]['route']!),
-              const SizedBox(width: 16),
-              _buildMenuButton(context, items[i + 1]['icon']!,
-                  items[i + 1]['label']!, items[i + 1]['route']!),
-            ],
-          ),
-        );
+        rows.add(Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _buildMenuButton(items[i], buttonSize, iconSize, fontSize),
+            const SizedBox(width: 12),
+            _buildMenuButton(items[i + 1], buttonSize, iconSize, fontSize),
+          ],
+        ));
       } else {
-        rows.add(
-          Center(
-            child: _buildMenuButton(context, items[i]['icon']!,
-                items[i]['label']!, items[i]['route']!),
-          ),
-        );
+        rows.add(Center(child: _buildMenuButton(items[i], buttonSize, iconSize, fontSize)));
       }
-      rows.add(const SizedBox(height: 20));
+      rows.add(const SizedBox(height: 16));
     }
+
     return Column(children: rows);
   }
 
-  // Función para crear cada botón de menú
-  Widget _buildMenuButton(
-      BuildContext context, String asset, String text, String route) {
+  Widget _buildMenuButton(Map<String, String> item, double size, double iconSize, double fontSize) {
     return GestureDetector(
-      onTap: () => Navigator.of(context).pushNamed(route),
+      onTap: () => Navigator.of(context).pushNamed(item['route']!),
       child: Container(
-        width: 160,
-        height: 160,
+        width: size,
+        height: size,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 3,
-              blurRadius: 7,
+              color: Colors.grey.withOpacity(0.4),
+              spreadRadius: 2,
+              blurRadius: 6,
               offset: const Offset(0, 3),
             ),
           ],
         ),
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(asset, height: 80, width: 80),
+            Image.asset(item['icon']!, height: iconSize, width: iconSize),
             const SizedBox(height: 10),
             Text(
-              text,
+              item['label']!,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 18,
+              style: TextStyle(
+                fontSize: fontSize,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFFFFD700),
+                color: const Color(0xFFFFD700),
               ),
             ),
           ],

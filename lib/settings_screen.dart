@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'dart:typed_data';
-import 'package:flutter/foundation.dart' show kIsWeb;  // Para verificar si estamos en la web
-import 'dart:html' as html; // Para la web
+import '../services/SettingsService.dart';
 import '../Users/UserModel.dart';
-import '../Users/UserService.dart';
 
 class SettingsScreen extends StatefulWidget {
   @override
@@ -12,7 +8,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  final UserService _userController = UserService();
+  final SettingsService _settingsService = SettingsService();
   UserModel? _user;
   bool _isLoading = true;
 
@@ -23,71 +19,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Future<void> _fetchUserData() async {
-    final userId = Supabase.instance.client.auth.currentUser?.id;
-    if (userId != null) {
-      final user = await _userController.getUserById(userId);
-      setState(() {
-        _user = user;
-        _isLoading = false;
-      });
-    }
+    final user = await _settingsService.fetchUser();
+    setState(() {
+      _user = user;
+      _isLoading = false;
+    });
   }
 
   Future<void> _updateUserData(Map<String, dynamic> updates) async {
-    if (_user != null) {
-      await _userController.updateUser(_user!.id, updates);
-      _fetchUserData();
-    }
-  }
-
-  // Método para subir imagen solo si estamos en la web
-  Future<void> _uploadImage(dynamic file) async {
-    if (kIsWeb) {
-      final storage = Supabase.instance.client.storage.from('UserImage');
-      final filePath = 'profile_images/${_user!.id}/${file.name}';
-      final reader = html.FileReader();
-      reader.readAsArrayBuffer(file);
-      await reader.onLoadEnd.first;
-      final data = reader.result as Uint8List;
-      final response = await storage.uploadBinary(filePath, data);
-
-      if (response.isNotEmpty) {
-        final fileUrl = storage.getPublicUrl(filePath);
-        _updateUserData({'photo_url': fileUrl});
-      } else {
-        // Manejar error
-      }
-    }
-  }
-
-  void _showImagePicker() async {
-    if (kIsWeb) { // Solo ejecutamos esto en la web
-      html.FileUploadInputElement uploadInput = html.FileUploadInputElement();
-      uploadInput.accept = 'image/*';
-      uploadInput.click();
-
-      uploadInput.onChange.listen((e) async {
-        final files = uploadInput.files;
-        if (files?.isNotEmpty == true) {
-          final file = files!.first;
-          await _uploadImage(file);
-        }
-      });
-    }
-  }
-
-  Future<void> _deleteImage() async {
-    if (_user?.photo_url != null) {
-      final storage = Supabase.instance.client.storage.from('UserImage');
-      final path = _user!.photo_url!.split('/').last;
-      final response = await storage.remove([path]);
-
-      if (response.isEmpty) {
-        await _updateUserData({'photo_url': null});
-      } else {
-        // Manejar error
-      }
-    }
+    await _settingsService.updateUserData(updates);
+    _fetchUserData();
   }
 
   @override
@@ -104,12 +45,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               padding: EdgeInsets.all(16.0),
               children: [
                 if (_user != null) ...[
-                  // Imagen del usuario
                   Center(
                     child: GestureDetector(
-                      onTap: () {
-                        // Aquí podemos ampliar la imagen si lo deseas
-                      },
+                      onTap: () {},
                       child: CircleAvatar(
                         radius: 50,
                         backgroundColor: Colors.grey[300],
@@ -122,18 +60,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     ),
                   ),
-                  // Botón para añadir o quitar imagen
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       IconButton(
                         icon: Icon(Icons.add_a_photo),
-                        onPressed: _showImagePicker,
+                        onPressed: () => _settingsService.pickAndUploadImage(context, _updateUserData),
                       ),
                       if (_user!.photo_url != null)
                         IconButton(
                           icon: Icon(Icons.delete),
-                          onPressed: _deleteImage,
+                          onPressed: () => _settingsService.deleteImage(_updateUserData),
                           iconSize: 20,
                         ),
                     ],
