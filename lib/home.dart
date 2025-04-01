@@ -82,7 +82,10 @@ class _HomeState extends State<Home> {
                   'icon': 'assets/transacciones.png',
                   'label': 'Transacciones'
                 },
-                {'route': '/maps', 'icon': 'assets/Ubicaciones/icono.png', 'label': 'Maps'},
+                {
+                  'route': '/maps', 
+                  'icon': 'assets/Ubicaciones/icono.png', 
+                  'label': 'Ubicaciones'},
                 {
                   'route': '/inversiones',
                   'icon': 'assets/Inversiones/icono.png',

@@ -13,6 +13,7 @@ import 'SignIn/verify_phone.dart';
 import './settings_screen.dart';
 import './AdminHome.dart';
 import 'Transacciones/transactions_screen.dart';
+import 'Maps/maps_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -54,6 +55,8 @@ class MyApp extends StatelessWidget {
             SettingsScreen(), // Ruta para la pantalla de ajustes
         '/transacciones_screen': (context) =>
             TransactionsScreen(), // Ruta para la pantalla de ajustes
+        '/maps': (context) => const MapsScreen(),
+        
       },
       onUnknownRoute: (RouteSettings settings) {
         return MaterialPageRoute<void>(

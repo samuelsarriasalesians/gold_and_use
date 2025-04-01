@@ -18,7 +18,10 @@ dependencies:
   image_picker: ^0.8.5+3
   fl_chart: ^0.63.0
   dio: ^5.4.0
-
+  flutter_map: ^5.0.0
+  latlong2: ^0.9.0
+  geocoding: ^2.1.1
+  
  
 
 
@@ -26,15 +29,16 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   qr_flutter: ^4.1.0
-  flutter_map: ^3.0.0
-  latlong2: ^0.8.1
   flutter_lints: ^4.0.0
+  # flutter_map: ^5.0.0
+  # latlong2: ^0.9.0
+  
 
 flutter:
   uses-material-design: true
   assets:
     - assets/splash.gif
-    - assets/logo.png
+    - assets/logo.png 
     - assets/icono_ajustes.png
     - assets/qr_icon.png
     - assets/transacciones.png
