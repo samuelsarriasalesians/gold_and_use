@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'UserController.dart';
+import 'UserService.dart';
 import 'UserModel.dart';
 
 class UserScreen extends StatefulWidget {
@@ -8,13 +8,13 @@ class UserScreen extends StatefulWidget {
 }
 
 class _UserScreenState extends State<UserScreen> {
-  final UserController userController = UserController();
+  final UserService userService = UserService();
   late Future<List<UserModel>> futureUsers;
 
   @override
   void initState() {
     super.initState();
-    futureUsers = userController.getUsers();
+    futureUsers = userService.getUsers();
   }
 
   @override
@@ -169,7 +169,7 @@ class _UserScreenState extends State<UserScreen> {
               child: Text(user == null ? 'Guardar' : 'Actualizar'),
               onPressed: () async {
                 if (user == null) {
-                  await userController.createUser(UserModel(
+                  await userService.createUser(UserModel(
                     id: 'uuid', // Supabase lo genera automáticamente
                     nombre: _nombreController.text,
                     email: _emailController.text,
@@ -179,7 +179,7 @@ class _UserScreenState extends State<UserScreen> {
                     isAdmin: _isAdmin, // Usamos el valor booleano aquí
                   ));
                 } else {
-                  await userController.updateUser(user.id, {
+                  await userService.updateUser(user.id, {
                     'nombre': _nombreController.text,
                     'email': _emailController.text,
                     'telefono': _telefonoController.text,
@@ -189,7 +189,7 @@ class _UserScreenState extends State<UserScreen> {
                 }
 
                 setState(() {
-                  futureUsers = userController.getUsers();
+                  futureUsers = userService.getUsers();
                 });
 
                 Navigator.pop(context);
@@ -202,9 +202,9 @@ class _UserScreenState extends State<UserScreen> {
   }
 
   void _deleteUser(String id) async {
-    await userController.deleteUser(id);
+    await userService.deleteUser(id);
     setState(() {
-      futureUsers = userController.getUsers();
+      futureUsers = userService.getUsers();
     });
   }
 }

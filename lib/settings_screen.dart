@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/foundation.dart' show kIsWeb;  // Para verificar si estamos en la web
 import 'dart:html' as html; // Para la web
 import '../Users/UserModel.dart';
-import '../Users/UserController.dart';
+import '../Users/UserService.dart';
 
 class SettingsScreen extends StatefulWidget {
   @override
@@ -12,7 +12,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  final UserController _userController = UserController();
+  final UserService _userController = UserService();
   UserModel? _user;
   bool _isLoading = true;
 

@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
           border: OutlineInputBorder(),
         ),
       ),
-      initialRoute: '/splash', // Cambia la ruta inicial al splash
+      initialRoute: '/splash', 
       routes: {
         '/splash': (context) => SplashScreen(), // Ruta para el splash
         '/': (context) =>

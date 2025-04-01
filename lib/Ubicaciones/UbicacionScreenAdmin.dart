@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'UbicacionModel.dart';
-import 'UbicacionController.dart';
+import 'UbicacioneService.dart';
 
 
 class UbicacionScreen extends StatefulWidget {

@@ -2,7 +2,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'UserModel.dart';
 
-class UserController {
+class UserService {
   final SupabaseClient supabase = Supabase.instance.client;
 
   // Obtener todos los usuarios
