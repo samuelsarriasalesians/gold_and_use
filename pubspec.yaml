@@ -16,6 +16,7 @@ dependencies:
   supabase_flutter: ^2.5.6 # Actualiza esta línea a la versión compatible
   html: ^0.15.0  # Agrega esta línea
   image_picker: ^1.0.0
+  http: ^1.3.0
   fl_chart: ^0.63.0
   dio: ^5.4.0
   flutter_map: ^5.0.0
@@ -40,10 +41,10 @@ flutter:
     - assets/icono_ajustes.png
     - assets/qr_icon.png
     - assets/transacciones.png
-    - assets/maps.png
     - assets/Users/icono.png
     - assets/Transacciones/icono.png
     - assets/Empeños/icono.png
     - assets/Inversiones/icono.png
     - assets/Ubicaciones/icono.png
     - assets/Notificaciones/icono.png
+    - assets/Ubicaciones/maps.png

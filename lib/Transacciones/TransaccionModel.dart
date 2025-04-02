@@ -1,12 +1,11 @@
 class TransaccionModel {
-  final int id;
+  final String id;
   final String usuarioId;
   final String tipo;
   final double cantidad;
   final double precioGramo;
   final double total;
   final DateTime fecha;
-  final String? qrCode;
 
   TransaccionModel({
     required this.id,
@@ -16,7 +15,6 @@ class TransaccionModel {
     required this.precioGramo,
     required this.total,
     required this.fecha,
-    this.qrCode,
   });
 
   // Convierte el mapa a un objeto de la clase Transaccion
@@ -29,7 +27,6 @@ class TransaccionModel {
       precioGramo: map['precio_gramo'],
       total: map['total'],
       fecha: DateTime.parse(map['fecha']),
-      qrCode: map['qr_code'],
     );
   }
 
@@ -42,7 +39,6 @@ class TransaccionModel {
       'precio_gramo': precioGramo,
       'total': total,
       'fecha': fecha.toIso8601String(),
-      'qr_code': qrCode,
     };
   }
 }

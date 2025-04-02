@@ -5,6 +5,8 @@ class QrService {
     String userId,
     String tipo,
     double monto,
+    double cantidad,
+    double precioGramo,
   ) async {
     final supabase = Supabase.instance.client;
     try {
@@ -37,13 +39,15 @@ class QrService {
         'usuario_id': userId,
         'tipo': tipo,
         'total': monto,
+        'cantidad': cantidad,
+        'precio_gramo': precioGramo,
         'fecha': DateTime.now().toIso8601String(),
       });
 
       return {'success': true, 'message': 'Transacción procesada con éxito'};
     } catch (e) {
       print("Error procesando transacción: $e");
-      return {'success': false, 'message': 'Error inesperado'};
+      return {'success': false, 'message': 'Error inesperado $e'};
     }
   }
 } 

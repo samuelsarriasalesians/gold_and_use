@@ -125,12 +125,11 @@ class _TransaccionScreenState extends State<TransaccionScreen> {
                 if (transaccion == null) {
                   // Crear una nueva transacción
                   await transaccionController.createTransaccion(TransaccionModel(
-                    id: 0, // El ID se generará automáticamente
+                    id: "", // El ID se generará automáticamente
                     tipo: _tipoController.text,
                     cantidad: double.parse(_cantidadController.text),
                     precioGramo: double.parse(_precioGramoController.text),
                     total: double.parse(_cantidadController.text) * double.parse(_precioGramoController.text),
-                    qrCode: '', // Puedes agregar la lógica para el código QR
                     usuarioId: usuarioId, // Añadir el ID del usuario
                     fecha: fecha, // Añadir la fecha de la transacción
                   ));
@@ -156,7 +155,7 @@ class _TransaccionScreenState extends State<TransaccionScreen> {
     );
   }
 
-  void _deleteTransaccion(int id) async {
+  void _deleteTransaccion(String id) async {
     await transaccionController.deleteTransaccion(id);
     setState(() {
       futureTransacciones = transaccionController.getTransacciones();

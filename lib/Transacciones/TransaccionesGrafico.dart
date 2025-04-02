@@ -1,214 +1,107 @@
-import 'package:fl_chart/fl_chart.dart';
+import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'TransaccioneService.dart';
-import 'TransaccionModel.dart';
+import 'package:fl_chart/fl_chart.dart';
+import 'package:http/http.dart' as http;
 
-class TransaccionesGrafico extends StatefulWidget {
-  final String userId;
-
-  const TransaccionesGrafico({Key? key, required this.userId}) : super(key: key);
+class GoldPriceChart extends StatefulWidget {
+  const GoldPriceChart({super.key});
 
   @override
-  _TransaccionesGraficoState createState() => _TransaccionesGraficoState();
+  State<GoldPriceChart> createState() => _GoldPriceChartState();
 }
 
-class _TransaccionesGraficoState extends State<TransaccionesGrafico> {
-  final TransaccionController _transaccionController = TransaccionController();
-  List<FlSpot> _compraData = [];
-  List<FlSpot> _ventaData = [];
+class _GoldPriceChartState extends State<GoldPriceChart> {
+  List<FlSpot> _data = [];
+  double? _latestPrice;
 
   @override
   void initState() {
     super.initState();
-    _loadTransacciones();
+    _fetchGoldPrice();
+    Timer.periodic(const Duration(hours: 4), (timer) => _fetchGoldPrice());
   }
 
-  Future<void> _loadTransacciones() async {
-    List<TransaccionModel> transacciones = await _transaccionController.getTransacciones();
+  Future<void> _fetchGoldPrice() async {
+    const apiKey = '2322844cf20475d079b0145ad8456b0c';
+    const url = 'https://www.goldapi.io/api/XAU/USD';
 
-    transacciones = transacciones
-        .where((t) => t.usuarioId == widget.userId)
-        .toList()
-      ..sort((a, b) => a.fecha.compareTo(b.fecha));
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'x-access-token': apiKey,
+        'Content-Type': 'application/json'
+      },
+    );
 
-    setState(() {
-      _compraData = transacciones
-          .where((t) => t.tipo == "compra")
-          .toList()
-          .asMap()
-          .entries
-          .map((entry) => FlSpot(entry.key.toDouble(), entry.value.total))
-          .toList();
+    if (response.statusCode == 200) {
+      final jsonData = json.decode(response.body);
+      final price = double.tryParse(jsonData['price'].toString());
 
-      _ventaData = transacciones
-          .where((t) => t.tipo == "venta")
-          .toList()
-          .asMap()
-          .entries
-          .map((entry) => FlSpot(entry.key.toDouble(), entry.value.total))
-          .toList();
-    });
+      if (price != null) {
+        setState(() {
+          _latestPrice = price;
+          _data.add(FlSpot(_data.length.toDouble(), price));
+        });
+      }
+    } else {
+      print('Error obteniendo precio del oro: ${response.statusCode}');
+    }
   }
 
-  Widget _buildChart(String title, List<FlSpot> data, Color color) {
-    return Expanded(
+  LineChartData _buildChartData() {
+    return LineChartData(
+      gridData: FlGridData(show: false),
+      titlesData: FlTitlesData(show: false),
+      borderData: FlBorderData(show: false),
+      lineBarsData: [
+        LineChartBarData(
+          spots: _data,
+          isCurved: true,
+          color: Colors.amber,
+          barWidth: 3,
+          isStrokeCapRound: true,
+          belowBarData: BarAreaData(show: false),
+        )
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 8,
+            offset: Offset(0, 4),
+          )
+        ],
+      ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            title,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: color),
-          ),
-          const SizedBox(height: 8),
-          Expanded(
-            child: LineChart(
-              LineChartData(
-                gridData: FlGridData(show: false),
-                titlesData: FlTitlesData(
-                  leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  bottomTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                ),
-                borderData: FlBorderData(show: false),
-                lineBarsData: [
-                  LineChartBarData(
-                    spots: data,
-                    isCurved: true,
-                    color: color,
-                    barWidth: 4,
-                    isStrokeCapRound: true,
-                    belowBarData: BarAreaData(show: true, color: color.withOpacity(0.3)),
-                  ),
-                ],
+          if (_latestPrice != null)
+            Text(
+              '\$_${_latestPrice!.toStringAsFixed(2)}',
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
               ),
             ),
+          const SizedBox(height: 12),
+          SizedBox(
+            height: 200,
+            child: LineChart(_buildChartData()),
           ),
         ],
       ),
-    );
-  }
-
-  void _openFullScreenChart() async {
-    await Navigator.of(context).push(
-      PageRouteBuilder(
-        transitionDuration: Duration(milliseconds: 300),
-        transitionsBuilder: (_, animation, __, child) {
-          return FadeTransition(opacity: animation, child: child);
-        },
-        pageBuilder: (_, __, ___) => _FullScreenChart(
-          compraData: _compraData,
-          ventaData: _ventaData,
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: _compraData.isNotEmpty || _ventaData.isNotEmpty ? _openFullScreenChart : null,
-      child: Container(
-        width: MediaQuery.of(context).size.width * 0.8,
-        height: 250,
-        padding: const EdgeInsets.all(16),
-        margin: const EdgeInsets.only(top: 16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.3),
-              spreadRadius: 3,
-              blurRadius: 6,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: _compraData.isEmpty && _ventaData.isEmpty
-            ? const Center(child: Text("No hay transacciones disponibles"))
-            : Row(
-                children: [
-                  _buildChart("Compras", _compraData, const Color.fromARGB(255, 215, 255, 57)),
-                  const SizedBox(width: 15),
-                  Container(width: 1, color: Colors.black),
-                  const SizedBox(width: 15),
-                  _buildChart("Ventas", _ventaData, Colors.red),
-                ],
-              ),
-      ),
-    );
-  }
-}
-
-class _FullScreenChart extends StatefulWidget {
-  final List<FlSpot> compraData;
-  final List<FlSpot> ventaData;
-
-  const _FullScreenChart({required this.compraData, required this.ventaData});
-
-  @override
-  State<_FullScreenChart> createState() => _FullScreenChartState();
-}
-
-class _FullScreenChartState extends State<_FullScreenChart> {
-  @override
-  void initState() {
-    super.initState();
-    SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeLeft]);
-  }
-
-  @override
-  void dispose() {
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: SafeArea(
-        child: Row(
-          children: [
-            Expanded(child: _buildChart("Compras", widget.compraData, const Color.fromARGB(255, 215, 255, 57))),
-            const VerticalDivider(color: Colors.white, width: 1),
-            Expanded(child: _buildChart("Ventas", widget.ventaData, Colors.red)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildChart(String title, List<FlSpot> data, Color color) {
-    return Column(
-      children: [
-        const SizedBox(height: 10),
-        Text(title, style: TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: LineChart(
-              LineChartData(
-                gridData: FlGridData(show: true),
-                titlesData: FlTitlesData(show: true),
-                borderData: FlBorderData(show: true),
-                lineBarsData: [
-                  LineChartBarData(
-                    spots: data,
-                    isCurved: true,
-                    color: color,
-                    barWidth: 3,
-                    isStrokeCapRound: true,
-                    belowBarData: BarAreaData(show: true, color: color.withOpacity(0.2)),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

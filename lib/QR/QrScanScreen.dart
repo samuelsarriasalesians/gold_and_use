@@ -30,11 +30,16 @@ class _QrScanScreenState extends State<QrScanScreen> {
         final userId = data['userId'];
         final tipo = data['tipo'];
         final monto = double.parse(data['monto'].toString());
+        final cantidad = double.parse(data['cantidad'].toString());
+        final precioGramo = double.parse(data['precio_gramo'].toString());
 
-        final result = await QrService.procesarTransaccion(userId, tipo, monto);
+        final result = await QrService.procesarTransaccion(
+          userId, tipo, monto, cantidad, precioGramo,
+        );
 
         _showDialog(result['message'], success: result['success']);
       } catch (e) {
+        print("Error procesando QR: $e");
         _showDialog('QR inválido o error de formato.');
       } finally {
         await Future.delayed(Duration(seconds: 2));
@@ -81,4 +86,4 @@ class _QrScanScreenState extends State<QrScanScreen> {
       ),
     );
   }
-} 
+}

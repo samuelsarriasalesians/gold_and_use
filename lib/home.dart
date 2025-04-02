@@ -47,7 +47,8 @@ class _HomeState extends State<Home> {
             const SizedBox(height: 24),
             _buildMenu(buttonSize, iconSize, fontSize),
             const SizedBox(height: 16),
-            TransaccionesGrafico(userId: userId),
+            const SizedBox(height: 16),
+            const GoldPriceChart(),
           ],
         ),
       ),
@@ -108,10 +109,10 @@ class _HomeState extends State<Home> {
   Widget _buildMenu(double buttonSize, double iconSize, double fontSize) {
     final items = [
       {'route': '/transacciones_screen', 'icon': 'assets/transacciones.png', 'label': 'Transacciones'},
-      {'route': '/maps', 'icon': 'assets/Ubicaciones/icono.png', 'label': 'Ubicaciones'},
+      {'route': '/maps', 'icon': 'assets/Ubicaciones/maps.png', 'label': 'Ubicaciones'},
       {'route': '/inversiones', 'icon': 'assets/Inversiones/icono.png', 'label': 'Inversiones'},
       {'route': '/empeños', 'icon': 'assets/Empeños/icono.png', 'label': 'Empeños'},
-      {'route': '/qr_screen', 'icon': 'assets/Notificaciones/icono.png', 'label': 'Notificaciones'},
+      {'route': '/qr_screen', 'icon': 'assets/qr_icon.png', 'label': 'QR'},
     ];
 
     List<Widget> rows = [];

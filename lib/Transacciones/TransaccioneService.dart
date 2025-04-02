@@ -32,12 +32,12 @@ class TransaccionController {
   }
 
   // Actualizar una transacción
-  Future<void> updateTransaccion(int id, Map<String, dynamic> updates) async {
+  Future<void> updateTransaccion(String id, Map<String, dynamic> updates) async {
     await supabase.from('transacciones').update(updates).eq('id', id);
   }
 
   // Eliminar una transacción
-  Future<void> deleteTransaccion(int id) async {
+  Future<void> deleteTransaccion(String id) async {
     await supabase.from('transacciones').delete().eq('id', id);
   }
 
