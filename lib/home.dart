@@ -111,7 +111,7 @@ class _HomeState extends State<Home> {
       {'route': '/maps', 'icon': 'assets/Ubicaciones/icono.png', 'label': 'Ubicaciones'},
       {'route': '/inversiones', 'icon': 'assets/Inversiones/icono.png', 'label': 'Inversiones'},
       {'route': '/empeños', 'icon': 'assets/Empeños/icono.png', 'label': 'Empeños'},
-      {'route': '/notificaciones', 'icon': 'assets/Notificaciones/icono.png', 'label': 'Notificaciones'},
+      {'route': '/qr_screen', 'icon': 'assets/Notificaciones/icono.png', 'label': 'Notificaciones'},
     ];
 
     List<Widget> rows = [];
