@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'Transacciones/TransaccionesGrafico.dart';
+import 'Transacciones/GoldPriceChart.dart';
 import 'services/HomeService.dart';
 
 class Home extends StatefulWidget {
@@ -110,9 +110,9 @@ class _HomeState extends State<Home> {
     final items = [
       {'route': '/transacciones_screen', 'icon': 'assets/transacciones.png', 'label': 'Transacciones'},
       {'route': '/maps', 'icon': 'assets/Ubicaciones/maps.png', 'label': 'Ubicaciones'},
-      {'route': '/inversiones', 'icon': 'assets/Inversiones/icono.png', 'label': 'Inversiones'},
+      {'route': '/inversiones_screen', 'icon': 'assets/Inversiones/icono.png', 'label': 'Inversiones'},
       {'route': '/empeños', 'icon': 'assets/Empeños/icono.png', 'label': 'Empeños'},
-      {'route': '/qr_screen', 'icon': 'assets/qr_icon.png', 'label': 'QR'},
+      {'route': '/qr_screen', 'icon': 'assets/qr_icon.png', 'label': 'QR'},      
     ];
 
     List<Widget> rows = [];

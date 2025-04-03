@@ -1,5 +1,6 @@
 import 'package:gold_and_use/AdminHome.dart';
 
+import 'Inversiones/InversionScreen.dart';
 import 'QR/QrScanScreen.dart';
 import 'SignIn/phone_sign_up.dart';
 import './splash.dart'; // Asegúrate de importar el nuevo archivo
@@ -58,6 +59,7 @@ class MyApp extends StatelessWidget {
             TransactionsScreen(), // Ruta para la pantalla de ajustes
         '/maps': (context) => const MapsScreen(),
         '/qr_screen': (context) => QrScanScreen(),
+        '/inversiones_screen': (context) => InversionScreen(),
         
       },
       onUnknownRoute: (RouteSettings settings) {
