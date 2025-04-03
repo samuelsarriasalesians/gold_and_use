@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'Transacciones/GoldPriceChart.dart';
 import 'services/HomeService.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -10,15 +11,54 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   bool isAdmin = false;
   String userSalary = "Cargando...";
   final String userId = Supabase.instance.client.auth.currentUser?.id ?? '';
+  RealtimeChannel? _userChannel;
+
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
 
   @override
   void initState() {
     super.initState();
     _loadUserData();
+    _setupRealtimeUpdates();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+    _fadeAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+  }
+
+  void _setupRealtimeUpdates() {
+    final channel = Supabase.instance.client.channel('users_changes');
+
+    channel.onPostgresChanges(
+      event: PostgresChangeEvent.update,
+      schema: 'public',
+      table: 'users',
+      filter: PostgresChangeFilter(
+        type: PostgresChangeFilterType.eq,
+        column: 'id',
+        value: userId,
+      ),
+      callback: (payload) {
+        final updated = payload.newRecord;
+        if (updated != null && mounted) {
+          setState(() {
+            userSalary = updated['cantidad_total'].toString();
+          });
+          _animationController.forward(from: 0); // animación parpadeo
+        }
+      },
+    );
+
+    channel.subscribe();
+    _userChannel = channel;
   }
 
   Future<void> _loadUserData() async {
@@ -27,6 +67,13 @@ class _HomeState extends State<Home> {
       isAdmin = result["isAdmin"];
       userSalary = result["userSalary"];
     });
+  }
+
+  @override
+  void dispose() {
+    _userChannel?.unsubscribe();
+    _animationController.dispose();
+    super.dispose();
   }
 
   @override
@@ -47,7 +94,6 @@ class _HomeState extends State<Home> {
             const SizedBox(height: 24),
             _buildMenu(buttonSize, iconSize, fontSize),
             const SizedBox(height: 16),
-            const SizedBox(height: 16),
             const GoldPriceChart(),
           ],
         ),
@@ -64,16 +110,27 @@ class _HomeState extends State<Home> {
       flexibleSpace: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Stack(
+            alignment: Alignment.center,
             children: [
-              Text('Sueldo: \$${userSalary}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-              Expanded(
-                child: Center(
-                  child: Image.asset('assets/logo.png', height: 45),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: Text(
+                    'Sueldo: \$${userSalary}',
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
-              _buildSettingsMenu(),
+              Center(
+                child: Image.asset('assets/logo.png', height: 45),
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: _buildSettingsMenu(),
+              ),
             ],
           ),
         ),
@@ -108,11 +165,22 @@ class _HomeState extends State<Home> {
 
   Widget _buildMenu(double buttonSize, double iconSize, double fontSize) {
     final items = [
-      {'route': '/transacciones_screen', 'icon': 'assets/transacciones.png', 'label': 'Transacciones'},
-      {'route': '/maps', 'icon': 'assets/Ubicaciones/maps.png', 'label': 'Ubicaciones'},
-      {'route': '/inversiones_screen', 'icon': 'assets/Inversiones/icono.png', 'label': 'Inversiones'},
-      {'route': '/empeños', 'icon': 'assets/Empeños/icono.png', 'label': 'Empeños'},
-      {'route': '/qr_screen', 'icon': 'assets/qr_icon.png', 'label': 'QR'},      
+      {
+        'route': '/transacciones_screen',
+        'icon': 'assets/transacciones.png',
+        'label': 'Transacciones'
+      },
+      {
+        'route': '/maps',
+        'icon': 'assets/Ubicaciones/maps.png',
+        'label': 'Ubicaciones'
+      },
+      {
+        'route': '/inversiones_screen',
+        'icon': 'assets/Inversiones/icono.png',
+        'label': 'Inversiones'
+      },
+      {'route': '/qr_screen', 'icon': 'assets/qr_icon.png', 'label': 'QR'},
     ];
 
     List<Widget> rows = [];
@@ -127,7 +195,8 @@ class _HomeState extends State<Home> {
           ],
         ));
       } else {
-        rows.add(Center(child: _buildMenuButton(items[i], buttonSize, iconSize, fontSize)));
+        rows.add(Center(
+            child: _buildMenuButton(items[i], buttonSize, iconSize, fontSize)));
       }
       rows.add(const SizedBox(height: 16));
     }
@@ -135,7 +204,8 @@ class _HomeState extends State<Home> {
     return Column(children: rows);
   }
 
-  Widget _buildMenuButton(Map<String, String> item, double size, double iconSize, double fontSize) {
+  Widget _buildMenuButton(
+      Map<String, String> item, double size, double iconSize, double fontSize) {
     return GestureDetector(
       onTap: () => Navigator.of(context).pushNamed(item['route']!),
       child: Container(

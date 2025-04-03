@@ -48,3 +48,4 @@ flutter:
     - assets/Ubicaciones/icono.png
     - assets/Notificaciones/icono.png
     - assets/Ubicaciones/maps.png
+    - assets/gold_price_data.json
