@@ -12,12 +12,7 @@ class Adminhome extends StatelessWidget {
     {
       'title': 'Transacciones',
       'folder': 'Transacciones',
-      'screen': TransaccionScreen()
-    },
-    {
-      'title': 'Empeños',
-      'folder': 'Empeños',
-      'screen': PlaceholderScreen('Empeños')
+      'screen': AdminTransaccionesScreen()
     },
     {
       'title': 'Inversiones',
