@@ -26,7 +26,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.gold_and_use"
-        minSdkVersion flutter.minSdkVersion  // Asegúrate de que la versión mínima del SDK esté configurada correctamente
+        minSdkVersion 21  // Asegúrate de que la versión mínima del SDK esté configurada correctamente
         targetSdkVersion 33
         versionCode flutter.versionCode
         versionName flutter.versionName
