@@ -1,0 +1,2 @@
+C:/Users/Evgeny Shadov/Desktop/S2AM/M8/gold_and_use/android/app/.cxx/RelWithDebInfo/6z1m4t4x/x86/CMakeFiles/edit_cache.dir
+C:/Users/Evgeny Shadov/Desktop/S2AM/M8/gold_and_use/android/app/.cxx/RelWithDebInfo/6z1m4t4x/x86/CMakeFiles/rebuild_cache.dir
