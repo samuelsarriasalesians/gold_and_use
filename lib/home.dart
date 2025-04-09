@@ -192,7 +192,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       },
       {
         'route': '/videollamada_screen',
-        'icon': 'assets/Consultor/icono.png',
+        'icon': 'assets/VideoCall/icono.png',
         'label': 'Llamada'
       },
     ];

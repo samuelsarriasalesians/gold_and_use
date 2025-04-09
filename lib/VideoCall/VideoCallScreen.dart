@@ -3,7 +3,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 
 // 🔥 TU APP ID de Agora
-const String appId = "TU_APP_ID_AQUI";
+const String appId = "ac5f9dd0b0974ff08764d20965e518cf";
 
 class VideoCallScreen extends StatefulWidget {
   final String channelName;
