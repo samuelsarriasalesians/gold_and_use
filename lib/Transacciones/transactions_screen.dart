@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'TransaccioneService.dart';
+import '../Users/UserModel.dart'; // Tu modelo de usuario
 
 class TransactionsScreen extends StatefulWidget {
   @override
@@ -52,6 +53,29 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     }
   }
 
+  // Subir la imagen y guardar la información
+  Future<void> _uploadImage() async {
+    if (_image != null) {
+      final user = UserModel(
+        id: Supabase.instance.client.auth.currentUser!.id, // ID del usuario autenticado
+        nombre: '',
+        email: Supabase.instance.client.auth.currentUser!.email ?? '',
+        telefono: null,
+        direccion: null,
+        fechaCreacion: DateTime.now(),
+        isAdmin: false,
+        photo_url: null,
+      );
+
+      final imageUrl = await _controller.uploadImage(_image!, user);
+
+      if (imageUrl != null) {
+        await _controller.saveImageData(user.id, imageUrl);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Imagen guardada exitosamente")));
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,13 +84,14 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
         backgroundColor: Colors.white,
         iconTheme: IconThemeData(color: Colors.black),
       ),
-      body: Padding(
+      body: SingleChildScrollView( // 🔥 PARA EVITAR EL OVERFLOW
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Center(child: Image.asset('assets/logo.png', width: 150)),
             SizedBox(height: 20),
+
             Text('Peso del Oro', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             Row(
               children: [
@@ -92,6 +117,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
               ],
             ),
             SizedBox(height: 20),
+
             Text('Pureza del Oro', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             DropdownButton<String>(
               value: selectedPurity,
@@ -102,6 +128,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
               onChanged: (value) => setState(() => selectedPurity = value),
             ),
             SizedBox(height: 20),
+
             Container(
               height: 50,
               width: double.infinity,
@@ -115,6 +142,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
               )),
             ),
             SizedBox(height: 20),
+
             ElevatedButton(
               onPressed: _calculatePrice,
               style: ElevatedButton.styleFrom(
@@ -123,16 +151,33 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
               ),
               child: Text('Calcular'),
             ),
-            Spacer(),
+            SizedBox(height: 20),
+
             Center(
               child: IconButton(
                 icon: Icon(Icons.camera_alt, size: 40, color: Colors.black),
                 onPressed: _takePicture,
               ),
             ),
-            if (_image != null) Center(child: Image.file(_image!, height: 100)),
+
+            if (_image != null) 
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Image.file(_image!, height: 150),
+                ),
+              ),
+
+            ElevatedButton(
+              onPressed: _uploadImage,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+              ),
+              child: Text('Guardar Imagen'),
+            ),
             SizedBox(height: 20),
-            // Sección con el precio actual del oro
+
             Container(
               padding: EdgeInsets.all(15),
               decoration: BoxDecoration(
