@@ -149,6 +149,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           case 'admin':
             Navigator.of(context).pushNamed('/admin_home');
             break;
+          case 'chat':
+            Navigator.of(context).pushNamed('/mensajes_screen');
+            break;
           case 'logout':
             Supabase.instance.client.auth.signOut();
             Navigator.of(context).pushReplacementNamed('/');
@@ -157,6 +160,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       },
       itemBuilder: (context) => [
         const PopupMenuItem(value: 'settings', child: Text('Settings')),
+        const PopupMenuItem(value: 'chat', child: Text('Chat')),
         if (isAdmin) const PopupMenuItem(value: 'admin', child: Text('Admin')),
         const PopupMenuItem(value: 'logout', child: Text('Logout')),
       ],
@@ -168,11 +172,11 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       {
         'route': '/transacciones_screen',
         'icon': 'assets/transacciones.png',
-        'label': 'Transacciones'
+        'label': 'Consultoría'
       },
       {
         'route': '/maps',
-        'icon': 'assets/Ubicaciones/maps.png',
+        'icon': 'assets/Ubicaciones/icono.png',
         'label': 'Ubicaciones'
       },
       {
@@ -181,6 +185,16 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         'label': 'Inversiones'
       },
       {'route': '/qr_screen', 'icon': 'assets/qr_icon.png', 'label': 'QR'},
+      {
+        'route': '/consultor_screen',
+        'icon': 'assets/Consultor/icono.png',
+        'label': 'Consultas'
+      },
+      {
+        'route': '/videollamada_screen',
+        'icon': 'assets/Consultor/icono.png',
+        'label': 'Llamada'
+      },
     ];
 
     List<Widget> rows = [];

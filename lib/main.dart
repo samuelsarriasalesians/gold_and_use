@@ -1,5 +1,8 @@
 import 'package:gold_and_use/AdminHome.dart';
+import 'package:gold_and_use/Mensajeria/ChatScreen.dart';
+import 'package:gold_and_use/VideoCall/VideoCallScreen.dart';
 
+import 'Consultas/ConsultorScreen.dart' show ConsultorScreen;
 import 'Inversiones/InversionScreen.dart';
 import 'QR/QrScanScreen.dart';
 import 'SignIn/phone_sign_up.dart';
@@ -16,6 +19,8 @@ import './settings_screen.dart';
 import './AdminHome.dart';
 import 'Transacciones/transactions_screen.dart';
 import 'Maps/maps_screen.dart';
+import 'VideoCall/JoinScreen.dart';
+import 'VideoCall/VideoCallScreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -60,6 +65,10 @@ class MyApp extends StatelessWidget {
         '/maps': (context) => const MapsScreen(),
         '/qr_screen': (context) => QrScanScreen(),
         '/inversiones_screen': (context) => InversionScreen(),
+        '/consultor_screen': (context) => ConsultorScreen(),
+        '/mensajes_screen': (context) => ChatScreen(),
+        '/videollamada_screen': (context) => JoinScreen(),
+
         
       },
       onUnknownRoute: (RouteSettings settings) {
