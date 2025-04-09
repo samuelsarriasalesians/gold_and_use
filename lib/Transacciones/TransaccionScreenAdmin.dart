@@ -2,163 +2,114 @@ import 'package:flutter/material.dart';
 import 'TransaccioneService.dart';
 import 'TransaccionModel.dart';
 
-class TransaccionScreen extends StatefulWidget {
+class AdminTransaccionesScreen extends StatefulWidget {
+  const AdminTransaccionesScreen({Key? key}) : super(key: key);
+
   @override
-  _TransaccionScreenState createState() => _TransaccionScreenState();
+  _AdminTransaccionesScreenState createState() => _AdminTransaccionesScreenState();
 }
 
-class _TransaccionScreenState extends State<TransaccionScreen> {
-  final TransaccionController transaccionController = TransaccionController();
-  late Future<List<TransaccionModel>> futureTransacciones;
+class _AdminTransaccionesScreenState extends State<AdminTransaccionesScreen> {
+  List<TransaccionModel> _transacciones = [];
+  List<TransaccionModel> _filteredTransacciones = [];
+  String _selectedTipo = 'Todos';
 
   @override
   void initState() {
     super.initState();
-    futureTransacciones = transaccionController.getTransacciones();
+    _loadTransacciones();
+  }
+
+  // Cargar las transacciones
+  Future<void> _loadTransacciones() async {
+    final transacciones = await TransaccionController().getTransacciones();
+    setState(() {
+      _transacciones = transacciones;
+      _filteredTransacciones = _transacciones;
+    });
+  }
+
+  // Filtrar transacciones por tipo (compra o venta)
+  void _filterByTipo(String tipo) {
+    setState(() {
+      _selectedTipo = tipo;
+      if (tipo == 'Todos') {
+        _filteredTransacciones = _transacciones;
+      } else {
+        _filteredTransacciones = _transacciones
+            .where((transaccion) => transaccion.tipo == tipo)
+            .toList();
+      }
+    });
+  }
+
+  // Eliminar una transacción
+  Future<void> _eliminarTransaccion(String id) async {
+    try {
+      await TransaccionController().deleteTransaccion(id);
+      setState(() {
+        _transacciones.removeWhere((transaccion) => transaccion.id == id);
+        _filteredTransacciones.removeWhere((transaccion) => transaccion.id == id);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Transacción eliminada")));
+    } catch (e) {
+      print("Error al eliminar transacción: $e");
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error al eliminar transacción")));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Transacciones')),
-      body: FutureBuilder<List<TransaccionModel>>(
-        future: futureTransacciones,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No hay transacciones registradas'));
-          }
-
-          final transacciones = snapshot.data!;
-
-          return ListView.builder(
-            itemCount: transacciones.length,
-            itemBuilder: (context, index) {
-              final transaccion = transacciones[index];
-
-              return Card(
-                child: ListTile(
-                  title: Text('${transaccion.tipo} - ${transaccion.cantidad} gr'),
-                  subtitle: Text('Precio Total: ${transaccion.total}'),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.edit, color: Colors.blue),
-                        onPressed: () => _showTransaccionForm(transaccion),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.delete, color: Colors.red),
-                        onPressed: () => _deleteTransaccion(transaccion.id),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _showTransaccionForm(null),
-        child: Icon(Icons.add),
-      ),
-    );
-  }
-
-  void _showTransaccionForm(TransaccionModel? transaccion) {
-    final _tipoController = TextEditingController(text: transaccion?.tipo ?? '');
-    final _cantidadController = TextEditingController(text: transaccion?.cantidad.toString() ?? '');
-    final _precioGramoController = TextEditingController(text: transaccion?.precioGramo.toString() ?? '');
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(transaccion == null ? 'Añadir Transacción' : 'Editar Transacción'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Aplicamos Padding a los TextField para generar espacio entre ellos
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: TextField(
-                  controller: _tipoController,
-                  decoration: InputDecoration(labelText: 'Tipo (compra/venta)'),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: TextField(
-                  controller: _cantidadController,
-                  decoration: InputDecoration(labelText: 'Cantidad (gramos)'),
-                  keyboardType: TextInputType.number,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: TextField(
-                  controller: _precioGramoController,
-                  decoration: InputDecoration(labelText: 'Precio por gramo'),
-                  keyboardType: TextInputType.number,
-                ),
-              ),
+      appBar: AppBar(
+        title: const Text("Admin Transacciones"),
+        backgroundColor: Colors.amber,
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: _filterByTipo,
+            itemBuilder: (context) => [
+              const PopupMenuItem(value: 'Todos', child: Text('Todos')),
+              const PopupMenuItem(value: 'compra', child: Text('Compra')),
+              const PopupMenuItem(value: 'venta', child: Text('Venta')),
             ],
+            icon: const Icon(Icons.filter_list),
           ),
-          actions: [
-            TextButton(
-              child: Text('Cancelar'),
-              onPressed: () => Navigator.pop(context),
-            ),
-            ElevatedButton(
-              child: Text(transaccion == null ? 'Guardar' : 'Actualizar'),
-              onPressed: () async {
-                // Agregamos los valores requeridos:
-                String usuarioId = "id_del_usuario"; // Obtén el ID del usuario logueado
-                DateTime fecha = DateTime.now(); // Fecha de la transacción
-
-                if (transaccion == null) {
-                  // Crear una nueva transacción
-                  await transaccionController.createTransaccion(TransaccionModel(
-                    id: "", // El ID se generará automáticamente
-                    tipo: _tipoController.text,
-                    cantidad: double.parse(_cantidadController.text),
-                    precioGramo: double.parse(_precioGramoController.text),
-                    total: double.parse(_cantidadController.text) * double.parse(_precioGramoController.text),
-                    usuarioId: usuarioId, // Añadir el ID del usuario
-                    fecha: fecha, // Añadir la fecha de la transacción
-                  ));
-                } else {
-                  // Actualizar una transacción existente
-                  await transaccionController.updateTransaccion(transaccion.id, {
-                    'tipo': _tipoController.text,
-                    'cantidad': double.parse(_cantidadController.text),
-                    'precio_gramo': double.parse(_precioGramoController.text),
-                  });
-                }
-
-                setState(() {
-                  futureTransacciones = transaccionController.getTransacciones();
-                });
-
-                Navigator.pop(context);
-              },
+        ],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            if (_filteredTransacciones.isEmpty)
+              Center(child: Text("No hay transacciones para mostrar")),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _filteredTransacciones.length,
+                itemBuilder: (context, index) {
+                  final transaccion = _filteredTransacciones[index];
+                  return Card(
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    child: ListTile(
+                      title: Text(
+                        'Transacción: ${transaccion.tipo} - \$${transaccion.total}',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text('Fecha: ${transaccion.fecha}'),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () => _eliminarTransaccion(transaccion.id),
+                      ),
+                      onTap: () {
+                        // Puedes agregar más funcionalidad para editar la transacción aquí.
+                      },
+                    ),
+                  );
+                },
+              ),
             ),
           ],
-        );
-      },
+        ),
+      ),
     );
-  }
-
-  void _deleteTransaccion(String id) async {
-    await transaccionController.deleteTransaccion(id);
-    setState(() {
-      futureTransacciones = transaccionController.getTransacciones();
-    });
   }
 }

@@ -17,22 +17,23 @@ class TransaccionModel {
     required this.fecha,
   });
 
-  // Convierte el mapa a un objeto de la clase Transaccion
-  factory TransaccionModel.fromMap(Map<String, dynamic> map) {
+  // Convertir de un JSON (mapa de datos) a un objeto TransaccionModel
+  factory TransaccionModel.fromJson(Map<String, dynamic> json) {
     return TransaccionModel(
-      id: map['id'],
-      usuarioId: map['usuario_id'],
-      tipo: map['tipo'],
-      cantidad: map['cantidad'],
-      precioGramo: map['precio_gramo'],
-      total: map['total'],
-      fecha: DateTime.parse(map['fecha']),
+      id: json['id'],
+      usuarioId: json['usuario_id'],
+      tipo: json['tipo'],
+      cantidad: json['cantidad'].toDouble(),
+      precioGramo: json['precio_gramo'].toDouble(),
+      total: json['total'].toDouble(),
+      fecha: DateTime.parse(json['fecha']),
     );
   }
 
-  // Convierte un objeto de la clase Transaccion a un mapa para insertar en la base de datos
-  Map<String, dynamic> toMap() {
+  // Convertir de un objeto TransaccionModel a un JSON (mapa de datos)
+  Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'usuario_id': usuarioId,
       'tipo': tipo,
       'cantidad': cantidad,
