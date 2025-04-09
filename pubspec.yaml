@@ -35,6 +35,10 @@ dev_dependencies:
   # flutter_map: ^5.0.0
   # latlong2: ^0.9.0
   
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/logo.png"  # Ruta de tu icono
 
 flutter:
   uses-material-design: true
@@ -51,3 +55,4 @@ flutter:
     - assets/Ubicaciones/icono.png
     - assets/Notificaciones/icono.png
     - assets/Ubicaciones/maps.png
+    - assets/gold_price_data.json

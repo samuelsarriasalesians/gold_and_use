@@ -4,9 +4,7 @@ import 'TransaccionModel.dart';
 
 class TransaccionController {
   final SupabaseClient supabase = Supabase.instance.client;
-
   final Dio _dio = Dio();
-
   double goldPrice = 86; // Precio por defecto en caso de fallo
 
   // Obtener todas las transacciones
@@ -14,26 +12,20 @@ class TransaccionController {
     final response = await supabase.from('transacciones').select();
 
     return response
-        .map<TransaccionModel>((json) => TransaccionModel.fromMap(json))
+        .map<TransaccionModel>((json) => TransaccionModel.fromJson(json))
         .toList();
   }
 
   // Obtener una transacción por ID
-  Future<TransaccionModel?> getTransaccionById(int id) async {
-    final response =
-        await supabase.from('transacciones').select().eq('id', id).single();
+  Future<TransaccionModel?> getTransaccionById(String id) async {
+    final response = await supabase.from('transacciones').select().eq('id', id).single();
 
-    return response != null ? TransaccionModel.fromMap(response) : null;
+    return response != null ? TransaccionModel.fromJson(response) : null;
   }
 
   // Crear una transacción
   Future<void> createTransaccion(TransaccionModel transaccion) async {
-    await supabase.from('transacciones').insert(transaccion.toMap());
-  }
-
-  // Actualizar una transacción
-  Future<void> updateTransaccion(String id, Map<String, dynamic> updates) async {
-    await supabase.from('transacciones').update(updates).eq('id', id);
+    await supabase.from('transacciones').insert(transaccion.toJson());
   }
 
   // Eliminar una transacción
@@ -41,8 +33,9 @@ class TransaccionController {
     await supabase.from('transacciones').delete().eq('id', id);
   }
 
-  //Joel
+  // Joel
 
+  // Función para obtener el precio del oro
   Future<void> fetchGoldPrice() async {
     try {
       final response = await _dio.get(

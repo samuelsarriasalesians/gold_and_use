@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:http/http.dart' as http;
 
 class GoldPriceChart extends StatefulWidget {
   const GoldPriceChart({super.key});
@@ -23,31 +22,23 @@ class _GoldPriceChartState extends State<GoldPriceChart> {
   }
 
   Future<void> _fetchGoldPrice() async {
-    const apiKey = '2322844cf20475d079b0145ad8456b0c';
-    const url = 'https://api.metalpriceapi.com/v1/latest?api_key=$apiKey&base=EUR&currencies=XAU';
-
     try {
-      final response = await http.get(Uri.parse(url));
+      final String raw = await DefaultAssetBundle.of(context).loadString('assets/gold_price_data.json');
+      final List jsonData = json.decode(raw);
 
-      if (response.statusCode == 200) {
-        final jsonData = json.decode(response.body);
-        final xau = jsonData['rates']['XAU'];
-
-        if (xau != null && xau > 0) {
-          final eurPerOunce = 1 / xau; // Precio en EUR por onza
-          final eurPerKg = eurPerOunce * 32.1507; // 1 kg = 32.1507 oz t
-
-          setState(() {
-            _latestPrice = eurPerKg;
-            _data.add(FlSpot(_data.length.toDouble(), eurPerKg));
-          });
-        }
-      } else {
-        print('Error de API: ${response.statusCode}');
-        print(response.body);
+      List<FlSpot> spots = [];
+      for (int i = 0; i < jsonData.length; i++) {
+        final day = jsonData[i];
+        final double price = double.tryParse(day['price'].toString()) ?? 0;
+        spots.add(FlSpot(i.toDouble(), price));
       }
+
+      setState(() {
+        _data = spots;
+        _latestPrice = spots.isNotEmpty ? spots.last.y : null;
+      });
     } catch (e) {
-      print("Excepción en la petición de oro: $e");
+      print("Excepción al leer JSON local de oro: $e");
     }
   }
 
@@ -60,11 +51,21 @@ class _GoldPriceChartState extends State<GoldPriceChart> {
         LineChartBarData(
           spots: _data,
           isCurved: true,
-          color: Colors.amber,
+          color: Colors.amber.shade700,
           barWidth: 3,
-          isStrokeCapRound: true,
-          belowBarData: BarAreaData(show: false),
-        )
+          dotData: FlDotData(show: false), // 👈 Ocultar los puntos
+          belowBarData: BarAreaData(
+            show: true,
+            gradient: LinearGradient(
+              colors: [
+                Colors.amber.withOpacity(0.3),
+                Colors.amber.withOpacity(0.05)
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -77,7 +78,7 @@ class _GoldPriceChartState extends State<GoldPriceChart> {
           backgroundColor: Colors.black,
           appBar: AppBar(
             backgroundColor: Colors.black,
-            title: Text("Precio del oro", style: TextStyle(color: Colors.amber)),
+            title: const Text("Precio del oro", style: TextStyle(color: Colors.amber)),
             iconTheme: const IconThemeData(color: Colors.white),
           ),
           body: Center(
@@ -99,13 +100,18 @@ class _GoldPriceChartState extends State<GoldPriceChart> {
         margin: const EdgeInsets.all(16),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
+          color: Colors.black,
+          borderRadius: BorderRadius.circular(20),
+          gradient: LinearGradient(
+            colors: [Colors.black, Colors.grey.shade900],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          boxShadow: const [
             BoxShadow(
-              color: Colors.black12,
-              blurRadius: 8,
-              offset: Offset(0, 4),
+              color: Colors.black38,
+              blurRadius: 10,
+              offset: Offset(0, 6),
             )
           ],
         ),
@@ -116,9 +122,9 @@ class _GoldPriceChartState extends State<GoldPriceChart> {
               Text(
                 '€${_latestPrice!.toStringAsFixed(2)} / kg',
                 style: const TextStyle(
-                  fontSize: 24,
+                  fontSize: 22,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: Colors.amber,
                 ),
               )
             else
@@ -128,7 +134,9 @@ class _GoldPriceChartState extends State<GoldPriceChart> {
               height: 200,
               child: _data.isNotEmpty
                   ? LineChart(_buildChartData())
-                  : const Center(child: Text("Cargando datos...")),
+                  : const Center(
+                      child: Text("Cargando datos...", style: TextStyle(color: Colors.white)),
+                    ),
             ),
           ],
         ),
