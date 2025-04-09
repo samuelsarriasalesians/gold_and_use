@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../services/ChatService.dart';
+import 'theme_notifier.dart'; // Para obtener el modo de tema
+import 'package:provider/provider.dart'; // Import the Provider package
+
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
@@ -14,7 +17,8 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
   late final String userId;
   late final String userName;
-  final ScrollController _scrollController = ScrollController(); // 🔥 Para bajar al final
+  final ScrollController _scrollController = ScrollController(); // Para bajar al final
+  bool _isTyping = false; // Estado para saber si el usuario está escribiendo
 
   @override
   void initState() {
@@ -28,7 +32,10 @@ class _ChatScreenState extends State<ChatScreen> {
     if (_controller.text.trim().isNotEmpty) {
       await _chatService.sendMessage(userId, userName, _controller.text.trim());
       _controller.clear();
-      _scrollToBottom(); // 🔥 Baja al último mensaje
+      _scrollToBottom(); // Baja al último mensaje
+      setState(() {
+        _isTyping = false; // Deja de escribir
+      });
     }
   }
 
@@ -46,11 +53,15 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context); // Obtener el tema actual
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Chat Global'),
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.amber,
+        backgroundColor: themeNotifier.value == ThemeMode.dark
+            ? Colors.black
+            : const Color(0xFFFFD700),
+        foregroundColor: Colors.white,
       ),
       body: Column(
         children: [
@@ -69,6 +80,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   itemBuilder: (context, index) {
                     final message = messages[index];
                     final isMe = message['usuario_id'] == userId;
+
                     return Align(
                       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
                       child: Container(
@@ -82,6 +94,13 @@ class _ChatScreenState extends State<ChatScreen> {
                             bottomLeft: Radius.circular(isMe ? 12 : 0),
                             bottomRight: Radius.circular(isMe ? 0 : 12),
                           ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.3),
+                              blurRadius: 6,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,9 +108,11 @@ class _ChatScreenState extends State<ChatScreen> {
                             if (!isMe)
                               Text(
                                 message['nombre_usuario'] ?? 'Anónimo',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 12,
-                                  color: Colors.black54,
+                                  color: themeNotifier.value == ThemeMode.dark
+                                      ? Colors.white54
+                                      : Colors.black54,
                                 ),
                               ),
                             Text(
@@ -107,6 +128,21 @@ class _ChatScreenState extends State<ChatScreen> {
               },
             ),
           ),
+          _isTyping
+              ? Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.keyboard, color: Colors.grey),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Escribiendo...',
+                        style: TextStyle(color: Colors.grey, fontSize: 14),
+                      ),
+                    ],
+                  ),
+                )
+              : const SizedBox.shrink(),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
             child: Row(
@@ -114,11 +150,19 @@ class _ChatScreenState extends State<ChatScreen> {
                 Expanded(
                   child: TextField(
                     controller: _controller,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                       hintText: 'Escribe un mensaje...',
-                      border: OutlineInputBorder(),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                     ),
-                    onSubmitted: (value) => _sendMessage(), // 🔥 Enviar al pulsar ENTER
+                    onChanged: (text) {
+                      setState(() {
+                        _isTyping = text.isNotEmpty; // Detecta si el usuario está escribiendo
+                      });
+                    },
+                    onSubmitted: (value) => _sendMessage(),
                   ),
                 ),
                 IconButton(
