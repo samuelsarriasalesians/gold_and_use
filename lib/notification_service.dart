@@ -10,7 +10,7 @@ class NotificationService {
       final userId = _supabase.auth.currentUser?.id;
       if (userId == null) return;
 
-      String message = _getUpdateMessage(field, newValue);
+      String message = _getUpdateMessage (field, newValue);
       if (message.isNotEmpty) {
         await _createNotification(userId, message);
       }
