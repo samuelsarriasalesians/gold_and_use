@@ -1,15 +1,16 @@
-import 'package:gold_and_use/AdminHome.dart';
-import 'package:gold_and_use/Mensajeria/ChatScreen.dart';
-import 'package:gold_and_use/VideoCall/VideoCallScreen.dart';
+import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:provider/provider.dart'; // Importamos provider
+import '../Mensajeria/theme_notifier.dart';  // Importa tu ThemeNotifier
 
-import 'Consultas/ConsultorScreen.dart' show ConsultorScreen;
+import 'AdminHome.dart';
+import 'Mensajeria/ChatScreen.dart';
+import 'VideoCall/VideoCallScreen.dart';
+import 'Consultas/ConsultorScreen.dart';
 import 'Inversiones/InversionScreen.dart';
 import 'QR/QrScanScreen.dart';
 import 'SignIn/phone_sign_up.dart';
-import './splash.dart'; // Asegúrate de importar el nuevo archivo
-import 'package:flutter/material.dart';
-import 'package:supabase_auth_ui/supabase_auth_ui.dart';
-
+import 'splash.dart'; // Asegúrate de importar el nuevo archivo
 import './home.dart';
 import 'SignIn/sign_in.dart';
 import 'SignIn/update_password.dart';
@@ -20,18 +21,23 @@ import './AdminHome.dart';
 import 'Transacciones/transactions_screen.dart';
 import 'Maps/maps_screen.dart';
 import 'VideoCall/JoinScreen.dart';
-import 'VideoCall/VideoCallScreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  /// TODO: replace with your credentials
+  // Inicializa Supabase
   await Supabase.initialize(
     url: 'https://dsjtherowikanmjmsiiv.supabase.co',
-    anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRzanRoZXJvd2lrYW5tam1zaWl2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk4MTYzNDIsImV4cCI6MjA1NTM5MjM0Mn0.DhF6IzCHkWExDBEfuiTkP61sPGOBDS6ib1tkKU8FE1E',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRzanRoZXJvd2lrYW5tam1zaWl2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzk4MTYzNDIsImV4cCI6MjA1NTM5MjM0Mn0.DhF6IzCHkWExDBEfuiTkP61sPGOBDS6ib1tkKU8FE1E',
   );
-  runApp(const MyApp());
+
+  // Run the app with ChangeNotifierProvider
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ThemeNotifier(), // Creamos el provider
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -39,12 +45,31 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Obtener el estado del tema desde ThemeNotifier
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Gold&use',
+      themeMode: themeNotifier.value,  // Usamos el ThemeMode que tenga el ThemeNotifier
       theme: ThemeData(
-        inputDecorationTheme: const InputDecorationTheme(
-          border: OutlineInputBorder(),
+        brightness: Brightness.light,
+        primarySwatch: Colors.amber,
+        scaffoldBackgroundColor: Colors.white,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFFFFD700),
+          foregroundColor: Colors.black,
+          elevation: 0,
+        ),
+      ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: Color(0xFF121212),
+        primarySwatch: Colors.amber,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.black,
+          foregroundColor: Color(0xFFFFD700),
+          elevation: 0,
         ),
       ),
       initialRoute: '/splash', 
