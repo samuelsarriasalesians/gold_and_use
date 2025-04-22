@@ -5,7 +5,6 @@ import '../Mensajeria/theme_notifier.dart';  // Importa tu ThemeNotifier
 
 import 'AdminHome.dart';
 import 'Mensajeria/ChatScreen.dart';
-import 'VideoCall/VideoCallScreen.dart';
 import 'Consultas/ConsultorScreen.dart';
 import 'Inversiones/InversionScreen.dart';
 import 'QR/QrScanScreen.dart';
@@ -20,7 +19,6 @@ import './settings_screen.dart';
 import './AdminHome.dart';
 import 'Transacciones/transactions_screen.dart';
 import 'Maps/maps_screen.dart';
-import 'VideoCall/JoinScreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -92,7 +90,6 @@ class MyApp extends StatelessWidget {
         '/inversiones_screen': (context) => InversionScreen(),
         '/consultor_screen': (context) => ConsultorScreen(),
         '/mensajes_screen': (context) => ChatScreen(),
-        '/videollamada_screen': (context) => JoinScreen(),
 
         
       },

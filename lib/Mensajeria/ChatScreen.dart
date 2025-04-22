@@ -85,13 +85,6 @@ class _ChatScreenState extends State<ChatScreen> {
           actions: [
             TextButton(
               onPressed: () {
-                _editMessage(messageId);
-                Navigator.pop(context);
-              },
-              child: const Text('Editar'),
-            ),
-            TextButton(
-              onPressed: () {
                 _deleteMessage(messageId);
                 Navigator.pop(context);
               },

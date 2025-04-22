@@ -149,9 +149,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
           case 'admin':
             Navigator.of(context).pushNamed('/admin_home');
             break;
-          case 'chat':
-            Navigator.of(context).pushNamed('/mensajes_screen');
-            break;
           case 'logout':
             Supabase.instance.client.auth.signOut();
             Navigator.of(context).pushReplacementNamed('/');
@@ -160,7 +157,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       },
       itemBuilder: (context) => [
         const PopupMenuItem(value: 'settings', child: Text('Settings')),
-        const PopupMenuItem(value: 'chat', child: Text('Chat')),
         if (isAdmin) const PopupMenuItem(value: 'admin', child: Text('Admin')),
         const PopupMenuItem(value: 'logout', child: Text('Logout')),
       ],
@@ -191,9 +187,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         'label': 'Consultas'
       },
       {
-        'route': '/videollamada_screen',
-        'icon': 'assets/VideoCall/icono.png',
-        'label': 'Llamada'
+        'route': '/mensajes_screen',
+        'icon': 'assets/message_icon.png',
+        'label': 'Chat'
       },
     ];
 
