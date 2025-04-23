@@ -4,7 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:provider/provider.dart';
 import '../services/ChatService.dart';
-import 'theme_notifier.dart';
+import 'theme_notifier.dart';  // Asegúrate de que esta importación esté correcta
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
@@ -36,6 +36,7 @@ class _ChatScreenState extends State<ChatScreen> {
       String? imageUrl;
 
       if (_image != null) {
+        // Subimos la imagen al bucket
         imageUrl = await _chatService.uploadImage(_image!, userId);
       }
 
@@ -72,6 +73,7 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
+  // Función de long press para eliminar o editar mensaje
   void _onLongPressMessage(int messageId) {
     setState(() {
       _selectedMessageId = messageId;
@@ -101,7 +103,6 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _editMessage(int messageId) {
-    // Aquí puedes abrir un modal para editar el mensaje y actualizarlo en Supabase
     print('Editar mensaje con ID: $messageId');
   }
 
@@ -282,6 +283,16 @@ class _ChatScreenState extends State<ChatScreen> {
               ],
             ),
           ),
+          if (_image != null)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Image.file(
+                _image!,
+                width: 100,
+                height: 100,
+                fit: BoxFit.cover,
+              ),
+            ),
         ],
       ),
     );
