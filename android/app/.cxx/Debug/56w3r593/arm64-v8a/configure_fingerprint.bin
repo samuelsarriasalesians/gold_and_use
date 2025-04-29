@@ -2,6 +2,7 @@ C/C++ Structured LogS
 Q
 OC:\Flutter\flutter\packages\flutter_tools\gradle\src\main\groovy\CMakeLists.txtC
 A
+<<<<<<< HEAD
 ?com.android.build.gradle.internal.cxx.io.EncodedFileFingerPrint	ö­’è2§ Òõ³…á2~
 |
 zC:\Users\Evgeny Shadov\Desktop\S2AM\M8\gold_and_use\android\app\.cxx\Debug\56w3r593\arm64-v8a\additional_project_files.txt	ö­’è2 ×¿«Øá2{
@@ -26,3 +27,29 @@ r
 pC:\Users\Evgeny Shadov\Desktop\S2AM\M8\gold_and_use\android\app\.cxx\Debug\56w3r593\arm64-v8a\prefab_config.json	ö­’è2( ã¿«Øá2y
 w
 uC:\Users\Evgeny Shadov\Desktop\S2AM\M8\gold_and_use\android\app\.cxx\Debug\56w3r593\arm64-v8a\symbol_folder_index.txt	ö­’è2l å¿«Øá2
+=======
+?com.android.build.gradle.internal.cxx.io.EncodedFileFingerPrint	 ´¹è2§ Òõ³…á2~
+|
+zC:\Users\Evgeny Shadov\Desktop\S2AM\M8\gold_and_use\android\app\.cxx\Debug\56w3r593\arm64-v8a\additional_project_files.txt	 ´¹è2 ×¿«Øá2{
+y
+wC:\Users\Evgeny Shadov\Desktop\S2AM\M8\gold_and_use\android\app\.cxx\Debug\56w3r593\arm64-v8a\android_gradle_build.json	 ´¹è2ý Ü¿«Øá2€
+~
+|C:\Users\Evgeny Shadov\Desktop\S2AM\M8\gold_and_use\android\app\.cxx\Debug\56w3r593\arm64-v8a\android_gradle_build_mini.json	 ´¹è2Ê ß¿«Øá2m
+k
+iC:\Users\Evgeny Shadov\Desktop\S2AM\M8\gold_and_use\android\app\.cxx\Debug\56w3r593\arm64-v8a\build.ninja	 ´¹è2¤ã ¢¿«Øá2q
+o
+mC:\Users\Evgeny Shadov\Desktop\S2AM\M8\gold_and_use\android\app\.cxx\Debug\56w3r593\arm64-v8a\build.ninja.txt	 ´¹è2v
+t
+rC:\Users\Evgeny Shadov\Desktop\S2AM\M8\gold_and_use\android\app\.cxx\Debug\56w3r593\arm64-v8a\build_file_index.txt	 ´¹è2O å¿«Øá2w
+u
+sC:\Users\Evgeny Shadov\Desktop\S2AM\M8\gold_and_use\android\app\.cxx\Debug\56w3r593\arm64-v8a\compile_commands.json	 ´¹è2	{
+y
+wC:\Users\Evgeny Shadov\Desktop\S2AM\M8\gold_and_use\android\app\.cxx\Debug\56w3r593\arm64-v8a\compile_commands.json.bin	 ´¹è2
+
+
+}C:\Users\Evgeny Shadov\Desktop\S2AM\M8\gold_and_use\android\app\.cxx\Debug\56w3r593\arm64-v8a\metadata_generation_command.txt	 ´¹è2	 ã¿«Øá2t
+r
+pC:\Users\Evgeny Shadov\Desktop\S2AM\M8\gold_and_use\android\app\.cxx\Debug\56w3r593\arm64-v8a\prefab_config.json	 ´¹è2( ã¿«Øá2y
+w
+uC:\Users\Evgeny Shadov\Desktop\S2AM\M8\gold_and_use\android\app\.cxx\Debug\56w3r593\arm64-v8a\symbol_folder_index.txt	 ´¹è2l å¿«Øá2
+>>>>>>> parent of 604d855 (Merge branch 'main' into samu_otra_rama)

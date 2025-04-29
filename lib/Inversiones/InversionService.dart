@@ -31,7 +31,7 @@ class InversionService {
           .eq('id', inversion.usuarioId)
           .maybeSingle();
 
-      if (user == null) return false; 
+      if (user == null) return false;
       final saldo = double.tryParse(user['cantidad_total'].toString()) ?? 0;
 
       if (saldo < inversion.cantidad) return false;

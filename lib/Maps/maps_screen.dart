@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-// import 'package:latlong2/lat long.dart';
+import 'package:latlong2/latlong.dart';
 import './mapservice.dart';
 
 class MapsScreen extends StatefulWidget {
@@ -42,103 +42,56 @@ class _MapsScreenState extends State<MapsScreen> {
             ),
           ),
           Expanded(
-            child: Stack(
+            child: FlutterMap(
+              mapController: _mapController,
+              options: MapOptions(
+                center: _controller.barcelonaCenter,
+                zoom: _controller.defaultZoom,
+              ),
               children: [
-                FlutterMap(
-                  mapController: _mapController,
-                  options: MapOptions(
-                    center: _controller.barcelonaCenter,
-                    zoom: _controller.defaultZoom,
-                    maxZoom: 17.4,
-                    minZoom: 3,
-                  ),
-                  children: [
-                    TileLayer(
-                      urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                      subdomains: const ['a', 'b', 'c'],
-                      userAgentPackageName: 'com.example.app',
-                      retinaMode: MediaQuery.of(context).devicePixelRatio > 1.0,
-                    ),
-                    MarkerLayer(
-                      markers: _controller.goldExchanges.map((exchange) {
-                        return Marker(
-                          width: 100,
-                          height: 100,
-                          point: exchange['position'],
-                          builder: (ctx) => GestureDetector(
-                            onTap: () {
-                              _showExchangeDetails(context, exchange);
-                            },
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(
-                                  Icons.currency_exchange,
-                                  color: Color(0xFFFFD700),
-                                  size: 40,
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 6, vertical: 2),
-                                  decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.7),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: Text(
-                                    exchange['name'],
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ],
+                TileLayer(
+                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  userAgentPackageName: 'com.example.app',
                 ),
-                Positioned(
-                  right: 16.0,
-                  bottom: 80.0,
-                  child: Column(
-                    children: [
-                      FloatingActionButton(
-                        heroTag: 'zoomIn',
-                        mini: true,
-                        backgroundColor: const Color(0xFFFFD700),
-                        onPressed: () {
-                          final currentZoom = _mapController.zoom;
-                          if (currentZoom < 17.4) {
-                            _mapController.move(
-                              _mapController.center,
-                              currentZoom + 1,
-                            );
-                          }
+                MarkerLayer(
+                  markers: _controller.goldExchanges.map((exchange) {
+                    return Marker(
+                      width: 100,
+                      height: 100,
+                      point: exchange['position'],
+                      builder: (ctx) => GestureDetector(
+                        onTap: () {
+                          _showExchangeDetails(context, exchange);
                         },
-                        child: const Icon(Icons.add, color: Colors.black),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.currency_exchange,
+                              color: Color(0xFFFFD700),
+                              size: 40,
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.7),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                exchange['name'],
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      const SizedBox(height: 8),
-                      FloatingActionButton(
-                        heroTag: 'zoomOut',
-                        mini: true,
-                        backgroundColor: const Color(0xFFFFD700),
-                        onPressed: () {
-                          final currentZoom = _mapController.zoom;
-                          if (currentZoom > 3) {
-                            _mapController.move(
-                              _mapController.center,
-                              currentZoom - 1,
-                            );
-                          }
-                        },
-                        child: const Icon(Icons.remove, color: Colors.black),
-                      ),
-                    ],
-                  ),
+                    );
+                  }).toList(),
                 ),
               ],
             ),
