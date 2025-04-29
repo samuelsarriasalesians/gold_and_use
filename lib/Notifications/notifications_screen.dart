@@ -85,6 +85,19 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     }
   }
 
+  Future<void> _deleteNotification(int id) async {
+    try {
+      await _supabase.from('notificaciones').delete().eq('id', id);
+      setState(() {
+        _notifications.removeWhere((n) => n['id'] == id);
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al eliminar notificación: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,6 +129,33 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         date: DateTime.parse(notification['fecha']),
                         isRead: notification['leido'],
                         onTap: () => _markAsRead(notification['id']),
+                        onLongPress: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Eliminar notificación'),
+                              content: const Text(
+                                  '¿Estás seguro de que quieres eliminar esta notificación?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(),
+                                  child: const Text('Cancelar'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    _deleteNotification(notification['id']);
+                                  },
+                                  child: const Text(
+                                    'Eliminar',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                       );
                     },
                   ),
@@ -130,6 +170,7 @@ class _NotificationItem extends StatelessWidget {
   final DateTime date;
   final bool isRead;
   final VoidCallback onTap;
+  final VoidCallback onLongPress;
 
   const _NotificationItem({
     required this.id,
@@ -137,6 +178,7 @@ class _NotificationItem extends StatelessWidget {
     required this.date,
     required this.isRead,
     required this.onTap,
+    required this.onLongPress,
   });
 
   @override
@@ -146,6 +188,7 @@ class _NotificationItem extends StatelessWidget {
       color: isRead ? Colors.grey[100] : const Color(0xFFFFF8E1),
       child: InkWell(
         onTap: onTap,
+        onLongPress: onLongPress,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
