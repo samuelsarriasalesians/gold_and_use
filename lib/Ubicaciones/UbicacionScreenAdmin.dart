@@ -4,6 +4,8 @@ import 'UbicacioneService.dart';
 
 
 class UbicacionScreen extends StatefulWidget {
+  const UbicacionScreen({super.key});
+
   @override
   _UbicacionScreenState createState() => _UbicacionScreenState();
 }
@@ -21,18 +23,18 @@ class _UbicacionScreenState extends State<UbicacionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Ubicaciones')),
+      appBar: AppBar(title: const Text('Ubicaciones')),
       body: FutureBuilder<List<UbicacionModel>>(
         future: futureUbicaciones,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           }
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No hay ubicaciones registradas'));
+            return const Center(child: Text('No hay ubicaciones registradas'));
           }
 
           final ubicaciones = snapshot.data!;

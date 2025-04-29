@@ -1,12 +1,29 @@
-import 'dart:convert';
-import 'package:flutter/services.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:dio/dio.dart';
 import 'InversionModel.dart';
 
 class InversionService {
   static final _supabase = Supabase.instance.client;
+  final Dio _dio = Dio();
 
-  static Future<List<InversionModel>> getInversionesByUser(String userId) async {
+  Future<double?> getGoldPriceEuroPerGram() async {
+    try {
+      final response = await _dio.get(
+        'https://api.metalpriceapi.com/v1/latest?api_key=2322844cf20475d079b0145ad8456b0c&base=EUR&currencies=XAU',
+      );
+      final xau = response.data['rates']['XAU'];
+      if (xau != null && xau > 0) {
+        final eurPerOunce = 1 / xau;
+        return eurPerOunce / 31.1035;
+      }
+    } catch (e) {
+      print('Error al obtener precio del oro: \$e');
+    }
+    return null;
+  }
+
+  static Future<List<InversionModel>> getInversionesByUser(
+      String userId) async {
     try {
       final response = await _supabase
           .from('inversiones')
@@ -18,7 +35,7 @@ class InversionService {
           .map((item) => InversionModel.fromMap(item))
           .toList();
     } catch (e) {
-      print("Error al cargar inversiones: $e");
+      print("Error al cargar inversiones: \$e");
       return [];
     }
   }
@@ -31,7 +48,7 @@ class InversionService {
           .eq('id', inversion.usuarioId)
           .maybeSingle();
 
-      if (user == null) return false; 
+      if (user == null) return false;
       final saldo = double.tryParse(user['cantidad_total'].toString()) ?? 0;
 
       if (saldo < inversion.cantidad) return false;
@@ -43,7 +60,7 @@ class InversionService {
       await _supabase.from('inversiones').insert(inversion.toMap());
       return true;
     } catch (e) {
-      print("Error al agregar inversión: $e");
+      print("Error al agregar inversión: \$e");
       return false;
     }
   }
@@ -72,7 +89,7 @@ class InversionService {
 
       return true;
     } catch (e) {
-      print("Error al cerrar inversión: $e");
+      print("Error al cerrar inversión: \$e");
       return false;
     }
   }
@@ -93,7 +110,30 @@ class InversionService {
             .update({'rendimiento': nuevoRendimiento}).eq('id', inversion.id);
       }
     } catch (e) {
-      print("Error actualizando rendimientos: $e");
+      print("Error actualizando rendimientos: \$e");
+    }
+  }
+
+  Future<double?> calcularGananciaPorcentualDesdeOro(
+    double inversionCantidad,
+    DateTime fechaInicio,
+  ) async {
+    try {
+      // Precio actual del oro en €/g
+      final precioActual = await getGoldPriceEuroPerGram();
+      if (precioActual == null) return null;
+
+      // Simulamos un precio de compra según la antigüedad
+      final dias = DateTime.now().difference(fechaInicio).inDays;
+      final factor = 1 - (dias * 0.0007); // depreciación simulada diaria
+      final precioCompra =
+          precioActual * (factor > 0.7 ? factor : 0.7); // límite mínimo
+
+      final ganancia = ((precioActual - precioCompra) / precioCompra) * 100;
+      return ganancia;
+    } catch (e) {
+      print('Error en cálculo de ganancia desde oro: $e');
+      return null;
     }
   }
 
@@ -117,45 +157,8 @@ class InversionService {
 
       return contador;
     } catch (e) {
-      print("Error al contar inversiones largas: $e");
+      print("Error al contar inversiones largas: \$e");
       return 0;
     }
-  }
-
-  /// ✅ Nueva función para calcular % de variación del oro desde fecha de inversión
-  static Future<double?> calcularGananciaPorcentualDesdeOro(DateTime fechaInicio) async {
-    try {
-      final String raw = await rootBundle.loadString('assets/gold_price_data.json');
-      final List data = json.decode(raw);
-
-      final precioInicio = _buscarPrecioPorFecha(data, fechaInicio);
-      final precioActual = _buscarPrecioPorFecha(data, DateTime.now());
-
-      if (precioInicio == null || precioActual == null) return null;
-
-      final ganancia = ((precioActual - precioInicio) / precioInicio) * 100;
-      return double.parse(ganancia.toStringAsFixed(2));
-    } catch (e) {
-      print("Error al calcular ganancia oro: $e");
-      return null;
-    }
-  }
-
-  static double? _buscarPrecioPorFecha(List data, DateTime fecha) {
-    final fechaStr = fecha.toIso8601String().split('T')[0];
-
-    for (final item in data) {
-      if (item['date'] == fechaStr) {
-        return (item['price'] as num).toDouble();
-      }
-    }
-
-    for (final item in data.reversed) {
-      if (item['date'].compareTo(fechaStr) <= 0) {
-        return (item['price'] as num).toDouble();
-      }
-    }
-
-    return null;
   }
 }

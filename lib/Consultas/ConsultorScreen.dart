@@ -4,7 +4,7 @@ import '../services/ConsultorService.dart';
 import 'ConsultorModel.dart';
 
 class ConsultorScreen extends StatefulWidget {
-  const ConsultorScreen({Key? key}) : super(key: key);
+  const ConsultorScreen({super.key});
 
   @override
   _ConsultorScreenState createState() => _ConsultorScreenState();
@@ -66,7 +66,7 @@ class _ConsultorScreenState extends State<ConsultorScreen> {
                                   fit: BoxFit.cover,
                                 ),
                               )
-                            : Icon(Icons.image_not_supported, size: 40, color: Colors.grey),
+                            : const Icon(Icons.image_not_supported, size: 40, color: Colors.grey),
                         title: Text(
                           consulta.nombre,
                           style: const TextStyle(fontWeight: FontWeight.bold),

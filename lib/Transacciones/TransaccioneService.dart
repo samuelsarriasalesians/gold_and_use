@@ -44,7 +44,7 @@ class TransaccionController {
           .from('consultorimage') // Asegúrate de que se llame exactamente así
           .upload(fullPath, imageFile);
 
-      if (response != null && response.isNotEmpty) {
+      if (response.isNotEmpty) {
         // Imagen subida correctamente, devolvemos la URL pública
         final publicUrl = supabase.storage.from('consultorimage').getPublicUrl(fullPath);
         return publicUrl;

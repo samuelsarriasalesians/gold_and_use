@@ -4,6 +4,8 @@ import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'QrService.dart';
 
 class QrScanScreen extends StatefulWidget {
+  const QrScanScreen({super.key});
+
   @override
   _QrScanScreenState createState() => _QrScanScreenState();
 }
@@ -42,7 +44,7 @@ class _QrScanScreenState extends State<QrScanScreen> {
         print("Error procesando QR: $e");
         _showDialog('QR inválido o error de formato.');
       } finally {
-        await Future.delayed(Duration(seconds: 2));
+        await Future.delayed(const Duration(seconds: 2));
         setState(() => _processing = false);
       }
     });
@@ -56,7 +58,7 @@ class _QrScanScreenState extends State<QrScanScreen> {
         content: Text(message),
         actions: [
           TextButton(
-            child: Text('OK'),
+            child: const Text('OK'),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ],
@@ -67,7 +69,7 @@ class _QrScanScreenState extends State<QrScanScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Escanear QR')),
+      appBar: AppBar(title: const Text('Escanear QR')),
       body: Column(
         children: [
           Expanded(
@@ -78,8 +80,8 @@ class _QrScanScreenState extends State<QrScanScreen> {
             ),
           ),
           if (_processing)
-            Padding(
-              padding: const EdgeInsets.all(16.0),
+            const Padding(
+              padding: EdgeInsets.all(16.0),
               child: CircularProgressIndicator(),
             )
         ],

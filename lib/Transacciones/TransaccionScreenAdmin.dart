@@ -3,7 +3,7 @@ import 'TransaccioneService.dart';
 import 'TransaccionModel.dart';
 
 class AdminTransaccionesScreen extends StatefulWidget {
-  const AdminTransaccionesScreen({Key? key}) : super(key: key);
+  const AdminTransaccionesScreen({super.key});
 
   @override
   _AdminTransaccionesScreenState createState() => _AdminTransaccionesScreenState();
@@ -51,10 +51,10 @@ class _AdminTransaccionesScreenState extends State<AdminTransaccionesScreen> {
         _transacciones.removeWhere((transaccion) => transaccion.id == id);
         _filteredTransacciones.removeWhere((transaccion) => transaccion.id == id);
       });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Transacción eliminada")));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Transacción eliminada")));
     } catch (e) {
       print("Error al eliminar transacción: $e");
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error al eliminar transacción")));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Error al eliminar transacción")));
     }
   }
 
@@ -81,7 +81,7 @@ class _AdminTransaccionesScreenState extends State<AdminTransaccionesScreen> {
         child: Column(
           children: [
             if (_filteredTransacciones.isEmpty)
-              Center(child: Text("No hay transacciones para mostrar")),
+              const Center(child: Text("No hay transacciones para mostrar")),
             Expanded(
               child: ListView.builder(
                 itemCount: _filteredTransacciones.length,

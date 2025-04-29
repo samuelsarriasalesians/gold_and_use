@@ -12,7 +12,7 @@ class Adminhome extends StatelessWidget {
     {
       'title': 'Transacciones',
       'folder': 'Transacciones',
-      'screen': AdminTransaccionesScreen()
+      'screen': const AdminTransaccionesScreen()
     },
     {
       'title': 'Inversiones',
@@ -31,15 +31,17 @@ class Adminhome extends StatelessWidget {
     },
   ];
 
+  Adminhome({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Administrar Tablas')),
+      appBar: AppBar(title: const Text('Administrar Tablas')),
       body: Padding(
         padding:
             const EdgeInsets.all(10.0), // Menos padding para ahorrar espacio
         child: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2, // Dos columnas
             crossAxisSpacing: 10, // Menos espacio entre columnas
             mainAxisSpacing: 10, // Menos espacio entre filas
@@ -75,7 +77,7 @@ class Adminhome extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.grey[200],
               borderRadius: BorderRadius.circular(12),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                   color: Colors.black26,
                   blurRadius: 4,
@@ -91,10 +93,10 @@ class Adminhome extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           Text(
             title,
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
           ),
         ],
       ),
@@ -104,7 +106,7 @@ class Adminhome extends StatelessWidget {
 
 class PlaceholderScreen extends StatelessWidget {
   final String title;
-  PlaceholderScreen(this.title);
+  const PlaceholderScreen(this.title, {super.key});
 
   @override
   Widget build(BuildContext context) {

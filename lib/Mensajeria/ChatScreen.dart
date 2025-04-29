@@ -7,7 +7,7 @@ import '../services/ChatService.dart';
 import 'theme_notifier.dart';  // Asegúrate de que esta importación esté correcta
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({Key? key}) : super(key: key);
+  const ChatScreen({super.key});
 
   @override
   _ChatScreenState createState() => _ChatScreenState();
@@ -232,12 +232,12 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ),
           _isTyping
-              ? Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              ? const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Row(
                     children: [
-                      const Icon(Icons.keyboard, color: Colors.grey),
-                      const SizedBox(width: 8),
+                      Icon(Icons.keyboard, color: Colors.grey),
+                      SizedBox(width: 8),
                       Text(
                         'Escribiendo...',
                         style: TextStyle(color: Colors.grey, fontSize: 14),

@@ -6,6 +6,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../Service.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -169,7 +171,7 @@ class _LoginScreenState extends State<LoginScreen> {
               iosClientId: 'TU_IOS_CLIENT_ID_AQUI',
             ),
             enableNativeAppleAuth: true,
-            socialProviders: [
+            socialProviders: const [
               OAuthProvider.google,
             ],
             onSuccess: (session) {

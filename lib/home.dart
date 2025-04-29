@@ -5,7 +5,7 @@ import 'services/HomeService.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+  const Home({super.key});
 
   @override
   _HomeState createState() => _HomeState();
@@ -48,7 +48,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       ),
       callback: (payload) {
         final updated = payload.newRecord;
-        if (updated != null && mounted) {
+        if (mounted) {
           setState(() {
             userSalary = updated['cantidad_total'].toString();
           });
@@ -118,7 +118,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                 child: FadeTransition(
                   opacity: _fadeAnimation,
                   child: Text(
-                    'Sueldo: \$${userSalary}',
+                    'Sueldo: \$$userSalary',
                     style: const TextStyle(
                         fontSize: 16, fontWeight: FontWeight.bold),
                   ),

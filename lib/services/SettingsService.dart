@@ -1,5 +1,4 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
 import '../Users/UserModel.dart';
 import '../Users/UserService.dart';
