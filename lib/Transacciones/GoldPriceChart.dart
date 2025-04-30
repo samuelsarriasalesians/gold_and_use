@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class GoldPriceChart extends StatefulWidget {
   const GoldPriceChart({super.key});
@@ -18,42 +20,62 @@ class _GoldPriceChartState extends State<GoldPriceChart> {
   void initState() {
     super.initState();
     _fetchGoldPrice();
-    Timer.periodic(const Duration(hours: 4), (timer) => _fetchGoldPrice());
   }
 
   Future<void> _fetchGoldPrice() async {
+    const apiKey = '2322844cf20475d079b0145ad8456b0c';
+    final now = DateTime.now();
+    final start = DateFormat('yyyy-MM-dd').format(now.subtract(const Duration(days: 180)));
+    final end = DateFormat('yyyy-MM-dd').format(now);
+
+    final url = 'https://api.metalpriceapi.com/v1/timeframe?api_key=$apiKey&start_date=$start&end_date=$end&base=EUR&currencies=XAU';
+
     try {
-      final String raw = await DefaultAssetBundle.of(context).loadString('assets/gold_price_data.json');
-      final List jsonData = json.decode(raw);
+      final response = await http.get(Uri.parse(url));
 
-      List<FlSpot> spots = [];
-      for (int i = 0; i < jsonData.length; i++) {
-        final day = jsonData[i];
-        final double price = double.tryParse(day['price'].toString()) ?? 0;
-        spots.add(FlSpot(i.toDouble(), price));
+      if (response.statusCode == 200) {
+        final jsonData = json.decode(response.body);
+        final Map<String, dynamic> prices = jsonData['rates'] ?? {};
+
+        List<String> sortedDates = prices.keys.toList()..sort();
+        List<FlSpot> spots = [];
+
+        for (int i = 0; i < sortedDates.length; i++) {
+          final day = sortedDates[i];
+          final dayData = prices[day];
+          final double? xauPrice = dayData != null ? dayData['XAU']?.toDouble() : null;
+
+          if (xauPrice != null && xauPrice > 0) {
+            double eurPerOunce = 1 / xauPrice;
+            double eurPerGram = eurPerOunce / 31.1035;
+            spots.add(FlSpot(i.toDouble(), eurPerGram));
+          }
+        }
+
+        setState(() {
+          _data = spots;
+          _latestPrice = spots.isNotEmpty ? spots.last.y : null;
+        });
+      } else {
+        print('Error API: ${response.statusCode}');
       }
-
-      setState(() {
-        _data = spots;
-        _latestPrice = spots.isNotEmpty ? spots.last.y : null;
-      });
     } catch (e) {
-      print("Excepción al leer JSON local de oro: $e");
+      print('Excepción cargando precio oro: $e');
     }
   }
 
   LineChartData _buildChartData() {
     return LineChartData(
-      gridData: FlGridData(show: false),
-      titlesData: FlTitlesData(show: false),
+      gridData: const FlGridData(show: false),
+      titlesData: const FlTitlesData(show: false),
       borderData: FlBorderData(show: false),
       lineBarsData: [
         LineChartBarData(
           spots: _data,
           isCurved: true,
-          color: Colors.amber.shade700,
+          color: Colors.amber,
           barWidth: 3,
-          dotData: FlDotData(show: false), // 👈 Ocultar los puntos
+          dotData: const FlDotData(show: false),
           belowBarData: BarAreaData(
             show: true,
             gradient: LinearGradient(
@@ -65,7 +87,7 @@ class _GoldPriceChartState extends State<GoldPriceChart> {
               end: Alignment.bottomCenter,
             ),
           ),
-        ),
+        )
       ],
     );
   }
@@ -78,7 +100,7 @@ class _GoldPriceChartState extends State<GoldPriceChart> {
           backgroundColor: Colors.black,
           appBar: AppBar(
             backgroundColor: Colors.black,
-            title: const Text("Precio del oro", style: TextStyle(color: Colors.amber)),
+            title: const Text('Precio del Oro', style: TextStyle(color: Colors.amber)),
             iconTheme: const IconThemeData(color: Colors.white),
           ),
           body: Center(
@@ -120,7 +142,7 @@ class _GoldPriceChartState extends State<GoldPriceChart> {
           children: [
             if (_latestPrice != null)
               Text(
-                '€${_latestPrice!.toStringAsFixed(2)} / kg',
+                '€${_latestPrice!.toStringAsFixed(2)} / g',
                 style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
@@ -128,15 +150,13 @@ class _GoldPriceChartState extends State<GoldPriceChart> {
                 ),
               )
             else
-              const CircularProgressIndicator(),
+              const CircularProgressIndicator(color: Colors.amber),
             const SizedBox(height: 12),
             SizedBox(
               height: 200,
               child: _data.isNotEmpty
                   ? LineChart(_buildChartData())
-                  : const Center(
-                      child: Text("Cargando datos...", style: TextStyle(color: Colors.white)),
-                    ),
+                  : const Center(child: Text('Cargando datos...', style: TextStyle(color: Colors.white))),
             ),
           ],
         ),

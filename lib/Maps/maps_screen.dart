@@ -4,7 +4,7 @@ import 'package:flutter_map/flutter_map.dart';
 import './mapservice.dart';
 
 class MapsScreen extends StatefulWidget {
-  const MapsScreen({Key? key}) : super(key: key);
+  const MapsScreen({super.key});
 
   @override
   _MapsScreenState createState() => _MapsScreenState();

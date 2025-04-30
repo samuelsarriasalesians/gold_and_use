@@ -39,7 +39,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +62,7 @@ class MyApp extends StatelessWidget {
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
-        scaffoldBackgroundColor: Color(0xFF121212),
+        scaffoldBackgroundColor: const Color(0xFF121212),
         primarySwatch: Colors.amber,
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.black,
@@ -87,9 +87,9 @@ class MyApp extends StatelessWidget {
             TransactionsScreen(), // Ruta para la pantalla de ajustes
         '/maps': (context) => const MapsScreen(),
         '/qr_screen': (context) => QrScanScreen(),
-        '/inversiones_screen': (context) => InversionScreen(),
-        '/consultor_screen': (context) => ConsultorScreen(),
-        '/mensajes_screen': (context) => ChatScreen(),
+        '/inversiones_screen': (context) => const InversionScreen(),
+        '/consultor_screen': (context) => const ConsultorScreen(),
+        '/mensajes_screen': (context) => const ChatScreen(),
 
         
       },

@@ -6,6 +6,8 @@ import 'Notifications/notifications_servicie.dart';
 import 'Notifications/notifications_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key});
+
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
 }

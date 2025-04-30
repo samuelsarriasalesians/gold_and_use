@@ -27,7 +27,7 @@ class ChatService {
           .upload(fileName, imageFile);
 
       // Verificar si la respuesta es exitosa
-      if (response != null && response.isNotEmpty) {
+      if (response.isNotEmpty) {
         // Obtener la URL pública de la imagen
         final imageUrl = supabase.storage.from('mensajesimg').getPublicUrl(fileName);
         return imageUrl;
@@ -55,14 +55,10 @@ class ChatService {
           .eq('usuario_id', user.id)
           .single();
 
-      if (response != null) {
-        // Eliminar el mensaje
-        await supabase.from('mensajes').delete().eq('id', messageId);
-        print('Mensaje eliminado exitosamente.');
-      } else {
-        print('No puedes eliminar este mensaje.');
-      }
-    } catch (e) {
+      // Eliminar el mensaje
+      await supabase.from('mensajes').delete().eq('id', messageId);
+      print('Mensaje eliminado exitosamente.');
+        } catch (e) {
       print('Error al eliminar el mensaje: $e');
     }
   }
@@ -88,18 +84,14 @@ class ChatService {
           .eq('usuario_id', user.id)
           .single();
 
-      if (response != null) {
-        // Actualizar el contenido del mensaje
-        await supabase.from('mensajes').update({
-          'contenido': newContent,
-          'fecha_creacion': DateTime.now().toIso8601String(),
-        }).eq('id', messageId);
+      // Actualizar el contenido del mensaje
+      await supabase.from('mensajes').update({
+        'contenido': newContent,
+        'fecha_creacion': DateTime.now().toIso8601String(),
+      }).eq('id', messageId);
 
-        print('Mensaje actualizado exitosamente.');
-      } else {
-        print('No puedes editar este mensaje.');
-      }
-    } catch (e) {
+      print('Mensaje actualizado exitosamente.');
+        } catch (e) {
       print('Error al editar el mensaje: $e');
     }
   }

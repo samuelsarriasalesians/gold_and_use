@@ -3,6 +3,8 @@ import 'UserService.dart';
 import 'UserModel.dart';
 
 class UserScreen extends StatefulWidget {
+  const UserScreen({super.key});
+
   @override
   _UserScreenState createState() => _UserScreenState();
 }
@@ -20,18 +22,18 @@ class _UserScreenState extends State<UserScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Usuarios')),
+      appBar: AppBar(title: const Text('Usuarios')),
       body: FutureBuilder<List<UserModel>>(
         future: futureUsers,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           }
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No hay usuarios registrados'));
+            return const Center(child: Text('No hay usuarios registrados'));
           }
 
           final users = snapshot.data!;
@@ -49,11 +51,11 @@ class _UserScreenState extends State<UserScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
-                        icon: Icon(Icons.edit, color: Colors.blue),
+                        icon: const Icon(Icons.edit, color: Colors.blue),
                         onPressed: () => _showUserForm(user),
                       ),
                       IconButton(
-                        icon: Icon(Icons.delete, color: Colors.red),
+                        icon: const Icon(Icons.delete, color: Colors.red),
                         onPressed: () => _deleteUser(user.id),
                       ),
                     ],
@@ -66,20 +68,20 @@ class _UserScreenState extends State<UserScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showUserForm(null),
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }
 
   void _showUserForm(UserModel? user) {
-    final _nombreController = TextEditingController(text: user?.nombre ?? '');
-    final _emailController = TextEditingController(text: user?.email ?? '');
-    final _telefonoController =
+    final nombreController = TextEditingController(text: user?.nombre ?? '');
+    final emailController = TextEditingController(text: user?.email ?? '');
+    final telefonoController =
         TextEditingController(text: user?.telefono ?? '');
-    final _direccionController =
+    final direccionController =
         TextEditingController(text: user?.direccion ?? '');
 
-    bool _isAdmin = user?.isAdmin ?? false; // Inicializamos el valor de isAdmin
+    bool isAdmin = user?.isAdmin ?? false; // Inicializamos el valor de isAdmin
 
     showDialog(
       context: context,
@@ -93,8 +95,8 @@ class _UserScreenState extends State<UserScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0), // Ajusta el valor
                 child: TextField(
-                  controller: _nombreController,
-                  decoration: InputDecoration(
+                  controller: nombreController,
+                  decoration: const InputDecoration(
                     labelText: 'Nombre',
                     contentPadding: EdgeInsets.symmetric(horizontal: 12), // Espacio interno
                   ),
@@ -103,8 +105,8 @@ class _UserScreenState extends State<UserScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0), // Ajusta el valor
                 child: TextField(
-                  controller: _emailController,
-                  decoration: InputDecoration(
+                  controller: emailController,
+                  decoration: const InputDecoration(
                     labelText: 'Email',
                     contentPadding: EdgeInsets.symmetric(horizontal: 12), // Espacio interno
                   ),
@@ -114,8 +116,8 @@ class _UserScreenState extends State<UserScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0), // Ajusta el valor
                 child: TextField(
-                  controller: _telefonoController,
-                  decoration: InputDecoration(
+                  controller: telefonoController,
+                  decoration: const InputDecoration(
                     labelText: 'Teléfono',
                     contentPadding: EdgeInsets.symmetric(horizontal: 12), // Espacio interno
                   ),
@@ -125,8 +127,8 @@ class _UserScreenState extends State<UserScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0), // Ajusta el valor
                 child: TextField(
-                  controller: _direccionController,
-                  decoration: InputDecoration(
+                  controller: direccionController,
+                  decoration: const InputDecoration(
                     labelText: 'Dirección',
                     contentPadding: EdgeInsets.symmetric(horizontal: 12), // Espacio interno
                   ),
@@ -136,23 +138,23 @@ class _UserScreenState extends State<UserScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: DropdownButtonFormField<bool>(
-                  value: _isAdmin,
+                  value: isAdmin,
                   onChanged: (newValue) {
                     setState(() {
-                      _isAdmin = newValue!;
+                      isAdmin = newValue!;
                     });
                   },
-                  items: [
+                  items: const [
                     DropdownMenuItem(
-                      child: Text('Administrador'),
                       value: true,
+                      child: Text('Administrador'),
                     ),
                     DropdownMenuItem(
-                      child: Text('No Administrador'),
                       value: false,
+                      child: Text('No Administrador'),
                     ),
                   ],
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Administrador',
                     contentPadding: EdgeInsets.symmetric(horizontal: 12), // Espacio interno
                   ),
@@ -162,7 +164,7 @@ class _UserScreenState extends State<UserScreen> {
           ),
           actions: [
             TextButton(
-              child: Text('Cancelar'),
+              child: const Text('Cancelar'),
               onPressed: () => Navigator.pop(context),
             ),
             ElevatedButton(
@@ -171,20 +173,20 @@ class _UserScreenState extends State<UserScreen> {
                 if (user == null) {
                   await userService.createUser(UserModel(
                     id: 'uuid', // Supabase lo genera automáticamente
-                    nombre: _nombreController.text,
-                    email: _emailController.text,
-                    telefono: _telefonoController.text,
-                    direccion: _direccionController.text,
+                    nombre: nombreController.text,
+                    email: emailController.text,
+                    telefono: telefonoController.text,
+                    direccion: direccionController.text,
                     fechaCreacion: DateTime.now(),
-                    isAdmin: _isAdmin, // Usamos el valor booleano aquí
+                    isAdmin: isAdmin, // Usamos el valor booleano aquí
                   ));
                 } else {
                   await userService.updateUser(user.id, {
-                    'nombre': _nombreController.text,
-                    'email': _emailController.text,
-                    'telefono': _telefonoController.text,
-                    'direccion': _direccionController.text,
-                    'isAdmin': _isAdmin, // Usamos el valor booleano aquí también
+                    'nombre': nombreController.text,
+                    'email': emailController.text,
+                    'telefono': telefonoController.text,
+                    'direccion': direccionController.text,
+                    'isAdmin': isAdmin, // Usamos el valor booleano aquí también
                   });
                 }
 

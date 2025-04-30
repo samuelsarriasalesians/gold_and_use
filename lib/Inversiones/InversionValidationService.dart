@@ -1,6 +1,5 @@
 // InversionValidationService.dart
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'InversionModel.dart';
 
 class InversionValidationService {
   static final _supabase = Supabase.instance.client;

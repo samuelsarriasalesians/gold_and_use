@@ -6,6 +6,8 @@ import 'TransaccioneService.dart';
 import '../Users/UserModel.dart';
 
 class TransactionsScreen extends StatefulWidget {
+  const TransactionsScreen({super.key});
+
   @override
   _TransactionsScreenState createState() => _TransactionsScreenState();
 }
@@ -40,7 +42,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
       });
     } else {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Ingrese un peso válido")));
+          .showSnackBar(const SnackBar(content: Text("Ingrese un peso válido")));
     }
   }
 
@@ -92,16 +94,16 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Consulta guardada exitosamente')));
+        const SnackBar(content: Text('Consulta guardada exitosamente')));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Consultoría', style: TextStyle(color: Colors.black)),
+        title: const Text('Consultoría', style: TextStyle(color: Colors.black)),
         backgroundColor: Colors.white,
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
@@ -109,8 +111,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Center(child: Image.asset('assets/logo.png', width: 150)),
-            SizedBox(height: 20),
-            Text('Peso del Oro',
+            const SizedBox(height: 20),
+            const Text('Peso del Oro',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             Row(
               children: [
@@ -118,7 +120,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                   child: TextField(
                     controller: weightController,
                     keyboardType: TextInputType.number,
-                    decoration: InputDecoration(hintText: 'Ingrese peso'),
+                    decoration: const InputDecoration(hintText: 'Ingrese peso'),
                   ),
                 ),
                 DropdownButton<String>(
@@ -134,8 +136,8 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                 ),
               ],
             ),
-            SizedBox(height: 20),
-            Text('Pureza del Oro',
+            const SizedBox(height: 20),
+            const Text('Pureza del Oro',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             DropdownButton<String>(
               value: selectedPurity,
@@ -147,7 +149,7 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                   .toList(),
               onChanged: (value) => setState(() => selectedPurity = value),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Container(
               height: 50,
               width: double.infinity,
@@ -158,18 +160,18 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
               child: Center(
                   child: Text(
                 'Precio del Oro: \$${calculatedPrice?.toStringAsFixed(2) ?? '0.00'}',
-                style: TextStyle(fontSize: 18),
+                style: const TextStyle(fontSize: 18),
               )),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _calculatePrice,
-              child: Text('Calcular'),
+              child: const Text('Calcular'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Center(
               child: IconButton(
-                icon: Icon(Icons.camera_alt, size: 40),
+                icon: const Icon(Icons.camera_alt, size: 40),
                 onPressed: _takePicture,
               ),
             ),
@@ -180,25 +182,25 @@ class _TransactionsScreenState extends State<TransactionsScreen> {
                   child: Image.file(_image!, height: 150),
                 ),
               ),
-            SizedBox(height: 20),
-            Text('Mensaje para el asesor',
+            const SizedBox(height: 20),
+            const Text('Mensaje para el asesor',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             TextField(
               controller: messageController,
               maxLines: 3,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Escribe aquí tu consulta...',
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _saveConsultor,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
                 foregroundColor: Colors.white,
               ),
-              child: Text('Enviar Consulta'),
+              child: const Text('Enviar Consulta'),
             ),
           ],
         ),
